@@ -300,6 +300,11 @@ fault-free flights:
 *Figure-eight (peak 3.3 m/s), 50 % LOE on rotor 1 at t = 10 s; medians over 10 seeds, cm.*
 <!-- END:table_e3 -->
 
+On the figure-eight (peak 3.3 m/s, peak acceleration 3.9 m/s^2) the 50 % loss costs the
+passive controller a 25 cm excursion and more than doubles its tracking error for the rest
+of the run; with the estimated pipeline the error stays at the pre-fault level (about
+3.5-4 cm RMSE), indistinguishable from the oracle.
+
 ### 4.4 Complete loss of one rotor (E4, E5)
 
 ![E4](figures/fig_e4_complete_loss.png)
@@ -327,6 +332,11 @@ while the primary axis itself points within a few degrees of vertical; the spin 
 at about 23 rad/s, two thirds of the gyro range.
 
 ![E4 3D](figures/fig_e4_3d.png)
+
+During the figure-eight (E5) the vehicle keeps following the trajectory while it spins;
+the tracking error after the transient is about 15-18 cm, larger than in hover because the
+position loop of the yaw-relaxed controller is deliberately slower than the nominal one.
+
 ![E5](figures/fig_e5_loss_in_flight.png)
 
 ### 4.5 Where complete-loss recovery breaks (E6)

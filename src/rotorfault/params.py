@@ -188,12 +188,12 @@ def nominal_params() -> QuadParams:
     Choices (all assumed, not identified):
 
     * **Mass / inertia** from :class:`MassModel`: 0.64 kg total, inertia
-      ``diag(1.47, 2.30, 3.37) e-3 kg m^2``.
+      ``diag(1.36, 2.12, 3.13) e-3 kg m^2``.
     * **Arm length** 0.11 m (220 mm motor-to-motor diagonal).
     * **Thrust**: maximum rotor speed 2500 rad/s (~23.9 k rpm) and
       ``k_f = 8.96e-7 N s^2`` give 5.6 N per rotor, i.e. a total thrust-to-weight
       ratio of about 3.6. Racing builds exceed this; the lower value is chosen on
-      purpose (task requirement 3-4x) and makes fault tolerance *harder*.
+      purpose (3-4x range) and makes fault tolerance *harder*.
     * **Idle** 250 rad/s (1 % of max thrust), mimicking a motor idle setting.
     * **Yaw torque / thrust** ``kappa = 0.015 m``.
     * **Motor lag** ``tau = 25 ms`` first order on rotor speed.

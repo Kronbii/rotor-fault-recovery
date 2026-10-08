@@ -28,7 +28,7 @@ class FigureEight:
 
     ``t' `` is a time warp that ramps the speed up over ``ramp`` seconds so that the
     reference starts at rest. With the defaults (A = 3 m, period 8 s) the peak speed
-    is 3.3 m/s and the peak acceleration 3.1 m/s^2.
+    is 3.3 m/s and the peak acceleration 3.9 m/s^2.
     """
 
     def __init__(self, amplitude=3.0, period=8.0, height=2.0, t0=1.0, ramp=2.0):
