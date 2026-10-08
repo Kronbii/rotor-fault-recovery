@@ -383,7 +383,8 @@ make reproduce      # calibration + E1-E7 + figures + tables, end to end
 ```
 
 Individual stages: `make experiments`, `make figures` (re-simulates the representative
-runs if `results/cache` is missing), `make report`. One script does the same as
+runs if `results/cache` is missing), `make report`, and `make paper` for `paper/main.pdf`
+(pdflatex and bibtex, or Tectonic). One script does the same as
 `make reproduce`: `python experiments/reproduce.py` (`--quick` runs a one-minute smoke
 version). Single simulations from the command line:
 
@@ -429,7 +430,7 @@ experiments/        thin scripts: one per experiment, reproduce.py for everythin
 tests/              pytest suite (physics, allocation, FDI, control, determinism)
 results/            generated JSON / CSV and replays
 figures/            generated PNG figures
-paper/              report.md, main.tex (IEEEtran), references.bib, generated/
+paper/              main.pdf (5 pages), main.tex (IEEEtran), report.md, references.bib, generated/
 docs/outreach.md    short summary for emails
 ```
 

@@ -659,7 +659,7 @@ def fig_e4(paths: Paths):
     ax.text(2.2, np.deg2rad(2000) + 0.8, "gyro range +-2000 deg/s", fontsize=6.5, color=INK2)
     ax.axhline(eq.spin, color=SERIES[6], lw=0.7, ls=":")
     ax.text(6.0, eq.spin - 3.5, f"design equilibrium {eq.spin:.1f} rad/s", fontsize=6.5, color=INK2)
-    ax.set_ylabel("|omega| (rad/s)")
+    ax.set_ylabel(r"$|\omega|$ (rad/s)")
     ax.set_ylim(0, 40)
     ax.set_xlabel("time (s)")
     ax = axs[1, 1]
@@ -886,7 +886,7 @@ def fig_relaxed_family(paths: Paths):
     axs[0].axhline(np.deg2rad(2000), color=INK2, lw=0.8)
     axs[0].text(3, np.deg2rad(2000) + 0.7, "gyro range", fontsize=6.5, color=INK2)
     axs[0].axvline(15, color=MUTED, ls=":", lw=0.8)
-    axs[0].set_ylabel("equilibrium spin |omega| (rad/s)")
+    axs[0].set_ylabel(r"equilibrium spin $|\omega|$ (rad/s)")
     axs[0].set_xlabel("primary-axis tilt from body z (deg)")
     axs[1].plot(tilts, 100 * np.array(fmax), color=SERIES[0], marker="o", ms=3, label="largest")
     axs[1].plot(

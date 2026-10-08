@@ -11,6 +11,17 @@
 \usepackage{xcolor}
 \usepackage{cite}
 \graphicspath{{../figures/}}
+% several floats per page, so tables sit next to their text instead of trailing the paper
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\setcounter{dbltopnumber}{3}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.75}
 \input{generated/numbers.tex}
 
 \begin{document}
@@ -84,8 +95,11 @@ yaw torque is scaled last.
 \section{Fault detection, isolation and estimation}
 \textbf{Regression.} The rotational dynamics and the body-z force balance are linear in $\eta$:
 \begin{equation}
-y \triangleq \begin{bmatrix} m a_z + D_z v_z + c\|v\|v_z\\ J\dot\omega + \omega\times(J\omega+h_r)
-+K_\omega\omega - \tau_{\dot\Omega}\end{bmatrix} = B\,\mathrm{diag}(\hat f)\,\eta \triangleq \Phi\eta,
+\begin{aligned}
+y &\triangleq \begin{bmatrix} m a_z + D_z v_z + c\|v\|v_z\\ J\dot\omega + \omega\times(J\omega+h_r)
++K_\omega\omega - \tau_{\dot\Omega}\end{bmatrix}\\
+&= B\,\mathrm{diag}(\hat f)\,\eta \triangleq \Phi\eta,
+\end{aligned}
 \end{equation}
 where $\hat f$ are thrusts predicted from the commands through the nominal motor model and the
 known delay. $\dot\omega$ comes from a 15\,Hz second-order state-variable filter of the gyro, and
@@ -164,6 +178,9 @@ and at 70--80\,\% the estimated pipeline beats the oracle because the oracle idl
 rotor immediately. On the figure-eight (Table~\ref{tab:e3}) the median peak deviation after a
 50\,\% loss is \resEThreePassiveMaxdevCm\,cm passive and \resEThreeEstMaxdevCm\,cm estimated.
 
+\input{generated/table_e1.tex}
+\input{generated/table_e3.tex}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_e1_hover_loe.png}
@@ -189,6 +206,10 @@ run before its onset), and that a single CUSUM designed for 15\,\% roughly doubl
 no measurable difference in these tests (no false alarms without it, \resESevenNoAdaptiveDelayMs\,ms
 median delay), so no benefit is claimed for it.
 
+\input{generated/table_e2.tex}
+\input{generated/table_e2_noise.tex}
+\input{generated/table_e7.tex}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_e2_fdi.png}
@@ -205,6 +226,8 @@ control a median \resEFourEstSwitchMs\,ms after the failure; the median peak dev
 \resEFourEstSettledCm\,cm and the spin \resEFourEstSpin\,rad/s (Fig.~\ref{fig:e4},
 Table~\ref{tab:e4}).
 
+\input{generated/table_e4.tex}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_e4_complete_loss.png}
@@ -217,6 +240,8 @@ errors tested and motors up to 2.4$\times$ slower than assumed, but fails at 24\
 80\,ms motor time constant and 3$\times$ the default turbulence. All three act during the spin-up
 transient, where the relaxed equilibrium leaves little margin and the body tilts by about
 40$^\circ$ (Fig.~\ref{fig:e6}, Table~\ref{tab:e6}).
+
+\input{generated/table_e6.tex}
 
 \begin{figure*}[t]
 \centering
@@ -233,13 +258,6 @@ true system departs from the model.}
 \label{fig:family}
 \end{figure}
 
-\input{generated/table_e1.tex}
-\input{generated/table_e2.tex}
-\input{generated/table_e2_noise.tex}
-\input{generated/table_e3.tex}
-\input{generated/table_e4.tex}
-\input{generated/table_e6.tex}
-\input{generated/table_e7.tex}
 
 \section{Discussion and limitations}
 The results support the pipeline \emph{in simulation}: diagnosis is fast enough that the

@@ -20,7 +20,7 @@ and a 3.3 m/s figure-eight) where the nominal controller flipped within about 0.
 mapped where it breaks: about 24 ms of actuator delay, motors three times slower than
 modelled, or three times the default turbulence.
 
-Key figure: `figures/fig_summary.png` (loss rate and peak deviation versus fault size, and a
+Attach `paper/main.pdf` (5 pages, IEEE format). Key figure: `figures/fig_summary.png` (loss rate and peak deviation versus fault size, and a
 complete-loss recovery), with the detail in `figures/fig_e4_complete_loss.png`.
 
 These are simulation results with assumed parameters; the next step I want to take is to

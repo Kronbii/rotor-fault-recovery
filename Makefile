@@ -4,7 +4,7 @@
 PY ?= .venv/bin/python
 PIP ?= .venv/bin/pip
 
-.PHONY: setup test lint format experiments figures report reproduce smoke clean-results
+.PHONY: setup test lint format experiments figures report reproduce smoke clean-results paper
 
 setup:
 	python3 -m venv .venv
@@ -45,3 +45,12 @@ smoke:
 
 clean-results:
 	rm -rf results/cache
+
+# The IEEE-style paper, paper/main.pdf: pdflatex + bibtex when TeX Live is installed,
+# otherwise Tectonic (a single binary that fetches the packages it needs).
+paper:
+	cd paper && if command -v pdflatex >/dev/null 2>&1; then \
+	  pdflatex -interaction=nonstopmode main && bibtex main && \
+	  pdflatex -interaction=nonstopmode main && pdflatex -interaction=nonstopmode main; \
+	elif command -v tectonic >/dev/null 2>&1; then tectonic main.tex; \
+	else echo "install TeX Live (pdflatex, bibtex) or Tectonic to build the paper"; exit 1; fi

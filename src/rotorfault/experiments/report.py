@@ -538,6 +538,7 @@ def write_reports(paths: Paths | None = None) -> dict:
             _inject(doc, key, md)
         wide = key in ("table_e2_noise", "table_e4", "table_e7", "table_e1")
         cap_tex = cap.replace("%", r"\%") + " " + note.replace("%", r"\%")
+        cap_tex = cap_tex.replace("|omega|", r"$|\omega|$")
         (gen / f"{key}.tex").write_text(_tex_table(header, rows, cap_tex, label, wide=wide) + "\n")
     et = e6_text(e6)
     for doc in (paths.root / "README.md", paths.paper / "report.md"):
