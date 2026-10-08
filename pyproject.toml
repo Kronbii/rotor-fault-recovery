@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rotorfault"
+version = "0.1.0"
+description = "Detect, isolate, recover: rotor-fault tolerance for a 5-inch quadrotor (simulation study)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Rami Kronbi" }]
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.24", "scipy>=1.10", "matplotlib>=3.7"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.4"]
+
+[project.scripts]
+rotorfault = "rotorfault.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rotorfault"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "experiments"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
+ignore = ["E741", "B905"]
