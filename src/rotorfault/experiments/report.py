@@ -107,7 +107,7 @@ def table_e2(e2):
         "detected",
         "delay ms: median (p95)",
         "isolation",
-        "|LOE error| pts: median (p95)",
+        "abs. LOE error, pts: median (p95)",
     ]
     note = (
         f"{m['n_fault_runs']} faulty runs (hover and figure-eight). False alarms: "
@@ -141,7 +141,7 @@ def table_e2_noise(e2):
         "detected",
         "delay ms: median (p95)",
         "isolation",
-        "|LOE err| pts",
+        "abs. LOE error, pts",
         "false alarms",
         "false alarms, 1x thresholds",
         "lost",
@@ -265,7 +265,7 @@ def table_e7(e7):
         "detected",
         "delay ms: median (p95)",
         "isolation",
-        "|LOE err| pts",
+        "abs. LOE error, pts",
         "false-alarm runs (+ before onset)",
         "lost",
     ]
@@ -373,7 +373,7 @@ ABSTRACT = (
     "Mueller and D'Andrea (2014) that spins the vehicle about a tilted primary axis "
     "(gain-scheduled LQR on the reduced attitude). In {e2_n_fault} Monte-Carlo runs with "
     "20-90 % loss of effectiveness, {e2_detect_phrase} (median delay "
-    "{e2_delay_median_ms:.0f} ms, 95th percentile {e2_delay_p95_ms:.0f} ms), "
+    "{e2_delay_median_ms:.0f} ms, 95th percentile {e2_delay_p95_ms:.0f} ms) and "
     "{e2_iso_phrase}, with a median magnitude error of {e2_loe_abs_err_median_pts:.1f} "
     "percentage points; {e2_fa_phrase} in {e2_free_minutes:.0f} min of fault-free "
     "flight. With a 50 % loss in hover the median peak deviation drops from "

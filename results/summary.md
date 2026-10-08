@@ -15,7 +15,7 @@
 
 ## E2: fault detection and isolation Monte Carlo.
 
-| LOE | detected | delay ms: median (p95) | isolation | |LOE error| pts: median (p95) |
+| LOE | detected | delay ms: median (p95) | isolation | abs. LOE error, pts: median (p95) |
 |---|---|---|---|---|
 | 20-35 % | 33/33 | 51 (80) | 100.0 % | 1.7 (4.6) |
 | 35-50 % | 44/44 | 37 (43) | 100.0 % | 1.0 (4.4) |
@@ -28,7 +28,7 @@
 
 ## E2: sensitivity to gyro noise.
 
-| gyro noise (deg/s) | detected | delay ms: median (p95) | isolation | |LOE err| pts | false alarms | false alarms, 1x thresholds | lost |
+| gyro noise (deg/s) | detected | delay ms: median (p95) | isolation | abs. LOE error, pts | false alarms | false alarms, 1x thresholds | lost |
 |---|---|---|---|---|---|---|---|
 | 0.5x (0.9) | 40/40 | 18 (30) | 100.0 % | 1.1 | 0 | 0/20 runs | 0 |
 | 1x (1.7) | 200/200 | 30 (58) | 100.0 % | 1.5 | 0 | -- | 0 |
@@ -75,7 +75,7 @@
 
 ## E7: FDI ablation.
 
-| FDI variant | detected | delay ms: median (p95) | isolation | |LOE err| pts | false-alarm runs (+ before onset) | lost |
+| FDI variant | detected | delay ms: median (p95) | isolation | abs. LOE error, pts | false-alarm runs (+ before onset) | lost |
 |---|---|---|---|---|---|---|
 | proposed (all elements) | 60/60 | 30 (64) | 100.0 % | 1.6 | 0/30 (+0) | 0 |
 | no healthy baseline | 59/60 | 28 (63) | 100.0 % | 1.8 | 1/30 (+1) | 0 |
