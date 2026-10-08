@@ -772,6 +772,16 @@ def fig_e5(paths: Paths):
         e = np.linalg.norm(r.position - r.p_ref, axis=1)
         st = BASE_STYLE[b]
         ax.plot(r.t, 100 * e, color=st["color"], ls=st["ls"], lw=1.1)
+        if r.crashed:
+            ax.plot(r.t[-1], min(100 * e[-1], 58), "x", color=st["color"], ms=7, mew=1.5)
+            ax.annotate(
+                f"passive lost ({r.crash_reason}) at {r.crash_time:.2f} s",
+                (r.t[-1], min(100 * e[-1], 58)),
+                xytext=(8, 8),
+                textcoords="offset points",
+                fontsize=6.8,
+                color=INK2,
+            )
     _events(ax, runs["estimated"], label=True)
     ax.set_ylim(0, 60)
     ax.set_xlim(3, 16)
