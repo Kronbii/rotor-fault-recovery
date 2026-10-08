@@ -38,6 +38,9 @@ class Scenario:
     # closed-loop settling before t = 0 so integrators have absorbed the parameter
     # mismatch when the experiment starts (identical for all baselines)
     settle_time: float = 3.0
+    # optional multiplicative changes of *true* parameters (robustness studies), e.g.
+    # {"tau_motor": 1.6}; the flight stack keeps using the nominal model
+    true_scale: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -97,6 +100,10 @@ def simulate(
     rng_par, rng_sens, rng_dist = (np.random.default_rng(s) for s in ss.spawn(3))
     nominal = nominal_params()
     true_p = perturbed_params(rng_par, nominal) if scenario.uncertainty else nominal
+    if scenario.true_scale:
+        true_p = true_p.copy()
+        for name, factor in scenario.true_scale.items():
+            setattr(true_p, name, getattr(true_p, name) * factor)
     dyn = QuadDynamics(true_p)
     sens = Sensors(scenario.sensors, rng_sens, cfg.dt_ctrl)
     dist_proc = Disturbance(scenario.disturbance, rng_dist, cfg.dt_ctrl)
@@ -216,6 +223,7 @@ def simulate(
             "mass": true_p.mass,
             "inertia": np.diag(true_p.inertia).tolist(),
             "tau_motor": true_p.tau_motor,
+            "rot_damping": true_p.rot_damping.tolist(),
             "k_f_scale": true_p.k_f_scale.tolist(),
         },
     )

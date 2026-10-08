@@ -105,7 +105,7 @@ class SE3Controller:
         b2d = cross3(b3d, b1c)
         b2d /= norm3(b2d)
         b1d = cross3(b2d, b3d)
-        R_des = np.column_stack([b1d, b2d, b3d])
+        R_des = np.array([b1d, b2d, b3d]).T
         T = max(float(F @ R[:, 2]), 0.0)
         tau = self.attitude_torque(R, omega, R_des)
         return ControlOutput(thrust=T, torque=tau, R_des=R_des, a_cmd=a)

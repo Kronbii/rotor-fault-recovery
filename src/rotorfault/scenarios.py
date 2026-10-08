@@ -30,6 +30,7 @@ def make_scenario(
     gyro_scale: float = 1.0,
     turbulence: float = 1.0,
     uncertainty: bool = True,
+    true_scale: dict | None = None,
 ) -> Scenario:
     return Scenario(
         name=traj,
@@ -39,4 +40,5 @@ def make_scenario(
         sensors=SensorParams().scaled(gyro_scale),
         disturbance=DisturbanceParams().scaled(turbulence),
         uncertainty=uncertainty,
+        true_scale=dict(true_scale or {}),
     )
