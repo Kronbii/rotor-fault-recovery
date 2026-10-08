@@ -12,6 +12,7 @@ Controllers and the fault estimator only ever see the outputs of this module.
 
 from __future__ import annotations
 
+import math
 from collections import deque
 
 import numpy as np
@@ -65,10 +66,11 @@ class StateEstimator:
 
     def predict(self, gyro: np.ndarray, accel: np.ndarray):
         self.omega = gyro - self.bias
-        self.q = quat_mul(self.q, quat_exp(self.omega * self.dt))
-        self.q /= np.linalg.norm(self.q)
+        q = quat_mul(self.q, quat_exp(self.omega * self.dt))
+        self.q = q / math.sqrt(float(q @ q))
         self.R = quat_to_rot(self.q)
-        a_w = self.R @ accel - np.array([0.0, 0.0, G])
+        a_w = self.R @ accel
+        a_w[2] -= G
         self.p = self.p + self.v * self.dt + 0.5 * a_w * self.dt**2
         self.v = self.v + a_w * self.dt
         self._hist.append((self.q.copy(), self.R.copy(), self.p.copy()))
@@ -83,8 +85,8 @@ class StateEstimator:
             q_then, R_then, p_then = self.q, self.R, self.p
         e_then = quat_log(quat_mul(quat_conj(q_then), q_meas))
         e = self.R.T @ (R_then @ e_then)
-        self.q = quat_mul(self.q, quat_exp(self.k_p * self.mocap_dt * e))
-        self.q /= np.linalg.norm(self.q)
+        q = quat_mul(self.q, quat_exp(self.k_p * self.mocap_dt * e))
+        self.q = q / math.sqrt(float(q @ q))
         self.R = quat_to_rot(self.q)
         self.bias = self.bias - self.k_i * self.mocap_dt * e
         r = p_meas - p_then

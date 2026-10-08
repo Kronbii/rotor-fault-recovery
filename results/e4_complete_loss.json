@@ -1,0 +1,328 @@
+{
+ "rows": [
+  {
+   "baseline": "passive",
+   "n": 32,
+   "lost": 32,
+   "lost_ci95": [
+    0.892817,
+    1.0
+   ],
+   "lost_reasons": {
+    "ground": 5,
+    "flip": 27,
+    "position": 0
+   },
+   "time_to_loss": {
+    "n": 32,
+    "mean": 0.393125,
+    "std": 0.217776,
+    "median": 0.303,
+    "p25": 0.288,
+    "p75": 0.324,
+    "p95": 0.902,
+    "min": 0.266,
+    "max": 0.92
+   },
+   "max_dev": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "settled_err": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "rmse_after_settle": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "recovery_time": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "final_spin": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "max_tilt_deg": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "switch_delay_ms": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "detection_delay_ms": {
+    "n": 32,
+    "mean": 21.875,
+    "std": 1.494783,
+    "median": 22.0,
+    "p25": 20.0,
+    "p75": 22.5,
+    "p95": 24.0,
+    "min": 20.0,
+    "max": 24.0
+   }
+  },
+  {
+   "baseline": "oracle",
+   "n": 32,
+   "lost": 0,
+   "lost_ci95": [
+    0.0,
+    0.107183
+   ],
+   "lost_reasons": {
+    "ground": 0,
+    "flip": 0,
+    "position": 0
+   },
+   "time_to_loss": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "max_dev": {
+    "n": 32,
+    "mean": 0.212995,
+    "std": 0.037255,
+    "median": 0.215478,
+    "p25": 0.190206,
+    "p75": 0.235172,
+    "p95": 0.269157,
+    "min": 0.134253,
+    "max": 0.296974
+   },
+   "settled_err": {
+    "n": 32,
+    "mean": 0.066806,
+    "std": 0.019287,
+    "median": 0.063715,
+    "p25": 0.053298,
+    "p75": 0.074536,
+    "p95": 0.104277,
+    "min": 0.038568,
+    "max": 0.11427
+   },
+   "rmse_after_settle": {
+    "n": 32,
+    "mean": 0.069581,
+    "std": 0.013635,
+    "median": 0.068011,
+    "p25": 0.06041,
+    "p75": 0.079408,
+    "p95": 0.09274,
+    "min": 0.046604,
+    "max": 0.095961
+   },
+   "recovery_time": {
+    "n": 32,
+    "mean": 1.478063,
+    "std": 1.265432,
+    "median": 1.195,
+    "p25": 1.044,
+    "p75": 1.3855,
+    "p95": 4.1773,
+    "min": 0.0,
+    "max": 6.548
+   },
+   "final_spin": {
+    "n": 32,
+    "mean": 23.195264,
+    "std": 0.896438,
+    "median": 23.164201,
+    "p25": 22.597711,
+    "p75": 23.761895,
+    "p95": 24.739742,
+    "min": 21.090409,
+    "max": 24.949995
+   },
+   "max_tilt_deg": {
+    "n": 32,
+    "mean": 38.450499,
+    "std": 3.979244,
+    "median": 39.343055,
+    "p25": 35.017264,
+    "p75": 41.065146,
+    "p95": 43.94589,
+    "min": 31.117657,
+    "max": 47.706903
+   },
+   "switch_delay_ms": {
+    "n": 32,
+    "mean": 0.0,
+    "std": 0.0,
+    "median": 0.0,
+    "p25": 0.0,
+    "p75": 0.0,
+    "p95": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "detection_delay_ms": {
+    "n": 25,
+    "mean": 1905.12,
+    "std": 837.171061,
+    "median": 1636.0,
+    "p25": 1262.0,
+    "p75": 2652.0,
+    "p95": 3606.4,
+    "min": 834.0,
+    "max": 3720.0
+   }
+  },
+  {
+   "baseline": "estimated",
+   "n": 32,
+   "lost": 0,
+   "lost_ci95": [
+    0.0,
+    0.107183
+   ],
+   "lost_reasons": {
+    "ground": 0,
+    "flip": 0,
+    "position": 0
+   },
+   "time_to_loss": {
+    "n": 0,
+    "mean": null,
+    "median": null,
+    "p25": null,
+    "p75": null,
+    "max": null
+   },
+   "max_dev": {
+    "n": 32,
+    "mean": 0.379165,
+    "std": 0.041345,
+    "median": 0.379242,
+    "p25": 0.350007,
+    "p75": 0.404534,
+    "p95": 0.446426,
+    "min": 0.296495,
+    "max": 0.467983
+   },
+   "settled_err": {
+    "n": 32,
+    "mean": 0.074765,
+    "std": 0.022993,
+    "median": 0.076312,
+    "p25": 0.05823,
+    "p75": 0.089813,
+    "p95": 0.109285,
+    "min": 0.030031,
+    "max": 0.120765
+   },
+   "rmse_after_settle": {
+    "n": 32,
+    "mean": 0.080746,
+    "std": 0.014496,
+    "median": 0.079659,
+    "p25": 0.073134,
+    "p75": 0.092445,
+    "p95": 0.103828,
+    "min": 0.045705,
+    "max": 0.110849
+   },
+   "recovery_time": {
+    "n": 32,
+    "mean": 2.243063,
+    "std": 1.326738,
+    "median": 1.668,
+    "p25": 1.6125,
+    "p75": 1.802,
+    "p95": 5.2762,
+    "min": 1.378,
+    "max": 6.536
+   },
+   "final_spin": {
+    "n": 32,
+    "mean": 23.193772,
+    "std": 0.896385,
+    "median": 23.154471,
+    "p25": 22.589723,
+    "p75": 23.766265,
+    "p95": 24.735852,
+    "min": 21.082708,
+    "max": 24.960195
+   },
+   "max_tilt_deg": {
+    "n": 32,
+    "mean": 41.946398,
+    "std": 2.434776,
+    "median": 41.57395,
+    "p25": 40.519358,
+    "p75": 43.363346,
+    "p95": 46.155522,
+    "min": 36.559719,
+    "max": 46.224081
+   },
+   "switch_delay_ms": {
+    "n": 32,
+    "mean": 62.125,
+    "std": 1.99609,
+    "median": 62.0,
+    "p25": 60.0,
+    "p75": 64.0,
+    "p95": 64.9,
+    "min": 58.0,
+    "max": 66.0
+   },
+   "detection_delay_ms": {
+    "n": 32,
+    "mean": 21.875,
+    "std": 1.494783,
+    "median": 22.0,
+    "p25": 20.0,
+    "p75": 22.5,
+    "p95": 24.0,
+    "min": 20.0,
+    "max": 24.0
+   }
+  }
+ ],
+ "config": {
+  "trajectory": "hover",
+  "onset_s": 2.0,
+  "duration_s": 10.0,
+  "rotors": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "seeds_per_rotor": 8
+ }
+}

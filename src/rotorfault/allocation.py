@@ -52,7 +52,7 @@ def priority_solve(
     g = mT * T
     # fast path: everything feasible
     full = g + h if d is None else g + h + d
-    if np.all(full >= lo) and np.all(full <= hi):
+    if full.min() >= lo.max() and full.max() <= hi.min():
         return AllocationResult(
             f=full, beta=1.0, alpha=1.0 if d is not None else 0.0, thrust_shift=0.0
         )
@@ -103,9 +103,14 @@ class PriorityAllocator:
         self.eta_floor = eta_floor
         self._cache_key = None
         self._M = None
+        self._M_nominal = None
 
-    def inverse(self, eta: np.ndarray) -> np.ndarray:
-        key = tuple(np.round(eta, 6))
+    def inverse(self, eta: np.ndarray | None) -> np.ndarray:
+        if eta is None:
+            if self._M_nominal is None:
+                self._M_nominal = np.linalg.inv(self.B)
+            return self._M_nominal
+        key = np.asarray(eta, dtype=float).tobytes()
         if key != self._cache_key:
             e = np.maximum(eta, self.eta_floor)
             self._M = np.linalg.inv(self.B * e[None, :])
@@ -115,9 +120,7 @@ class PriorityAllocator:
     def allocate(
         self, T: float, tau: np.ndarray, eta: np.ndarray | None = None
     ) -> AllocationResult:
-        if eta is None:
-            eta = np.ones(4)
-        M = self.inverse(np.asarray(eta, dtype=float))
+        M = self.inverse(eta)
         h = M[:, 1] * tau[0] + M[:, 2] * tau[1]
         d = M[:, 3] * tau[2]
         return priority_solve(M[:, 0], T, h, d, self.lo, self.hi)

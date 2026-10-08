@@ -4,9 +4,11 @@
   half in hover and half on the figure-eight, closed loop with the proposed pipeline.
 * 100 fault-free runs of 12 s (hover, figure-eight, and aggressive waypoint steps that
   were not used for calibration) to measure false alarms.
-* Gyro-noise sensitivity: noise x {0.5, 1, 2, 4, 8}; residual scale and thresholds are
-  re-calibrated for every level (as one would when tuning on a vehicle), then 50 faulty
-  and 30 fault-free runs per level.
+* Gyro-noise sensitivity: noise x {0.5, 2, 4, 8} (1x is the main experiment); residual
+  scale and thresholds are re-calibrated for every level (as one would when tuning on a
+  vehicle), then 40 faulty and 20 fault-free runs per level, plus the same 20
+  fault-free runs with the thresholds calibrated at 1x (what happens if one does not
+  re-tune).
 """
 
 from __future__ import annotations
@@ -147,25 +149,37 @@ def run(paths: Paths, quick: bool = False) -> dict:
     main["calibration"] = cal
 
     # ---------------- gyro-noise sensitivity ----------------
-    scales = (1.0, 4.0) if quick else GYRO_SCALES
-    n_sf, n_s0 = (6, 3) if quick else (50, 30)
+    scales = (4.0,) if quick else GYRO_SCALES
+    n_sf, n_s0 = (6, 3) if quick else (40, 20)
     sweep = []
     sweep_rows = []
     for k, g in enumerate(scales):
-        c = calibrate(paths, g, n_runs=40, quick=quick)
+        if g == 1.0:  # the main experiment is the 1x point
+            s = dict(main)
+            s.update(gyro_scale=1.0, gyro_noise_rad_s=0.03, false_alarms_fixed_cal=None)
+            sweep.append(s)
+            continue
+        c = calibrate(paths, g, n_runs=30, duration=10.0, quick=quick)
         cd = dict(sigma=c.sigma.tolist(), thresholds=list(c.thresholds))
         seed0 = SEED_E2_SWEEP + 1000 * k
-        ts = _fault_tasks(n_sf, seed0, cd, g, tag=f"gyro_x{g:g}") + _free_tasks(
-            n_s0, seed0 + 500, cd, g, tag=f"gyro_x{g:g}"
+        tag = f"gyro_x{g:g}"
+        ts = _fault_tasks(n_sf, seed0, cd, g, tag=tag) + _free_tasks(
+            n_s0, seed0 + 500, cd, g, tag=tag
         )
+        # the same fault-free flights with the thresholds calibrated at 1x (not re-tuned)
+        ts += _free_tasks(n_s0, seed0 + 500, cal, g, tag=tag + "_fixed_cal")
         rs = pmap(run_task, ts, desc=f"{NAME} gyro x{g:g}")
         sweep_rows += rs
+        own = [r for r in rs if r["set"] == tag]
+        fixed = [r for r in rs if r["set"] == tag + "_fixed_cal"]
         s = fdi_summary(
-            [r for r in rs if r["magnitude"] > 0], [r for r in rs if r["magnitude"] == 0]
+            [r for r in own if r["magnitude"] > 0], [r for r in own if r["magnitude"] == 0]
         )
         s["gyro_scale"] = g
         s["gyro_noise_rad_s"] = 0.03 * g
         s["calibration"] = cd
+        s["false_alarms_fixed_cal"] = sum(r["false_alarm"] for r in fixed)
+        s["n_free_fixed_cal"] = len(fixed)
         sweep.append(s)
 
     result = dict(

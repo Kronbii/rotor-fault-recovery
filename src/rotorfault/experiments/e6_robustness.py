@@ -21,10 +21,10 @@ from .runner import run_task
 NAME = "e6_robustness"
 SEED0 = 600_000
 SWEEPS = {
-    "actuator_delay_ms": [0, 2, 4, 8, 12, 16, 24],
-    "motor_tau_ms": [15, 25, 35, 45, 60],
-    "damping_scale": [0.5, 0.75, 1.0, 1.5, 2.0],
-    "inertia_scale": [0.8, 0.9, 1.0, 1.1, 1.2],
+    "actuator_delay_ms": [0, 2, 4, 8, 12, 16, 20, 24],
+    "motor_tau_ms": [15, 25, 40, 60, 80, 100],
+    "damping_scale": [0.25, 0.5, 1.0, 1.5, 2.0],
+    "inertia_scale": [0.7, 0.85, 1.0, 1.2, 1.4],
     "turbulence_scale": [0.0, 1.0, 2.0, 3.0, 4.0],
 }
 

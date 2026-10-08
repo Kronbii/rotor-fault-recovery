@@ -14,3 +14,4 @@ paper/*.bbl
 paper/*.blg
 paper/*.pdf
 .DS_Store
+build/

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "Detect, isolate, recover: rotor-fault tolerance for a 5-inch quadrotor (simulation study)"
+abstract: >-
+  Simulation study and open-source code for rotor loss-of-effectiveness detection,
+  isolation and fault-tolerant control of a 5-inch FPV-class quadrotor, including a
+  yaw-relaxed controller for the complete loss of one rotor.
+authors:
+  - family-names: Kronbi
+    given-names: Rami
+type: software
+version: 0.1.0
+date-released: 2026-10-08
+license: MIT
+keywords:
+  - quadrotor
+  - fault detection and isolation
+  - fault-tolerant control
+  - rotor failure
+  - UAV

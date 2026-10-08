@@ -67,6 +67,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from scipy.linalg import expm
+from scipy.linalg.lapack import dposv
 
 from .params import QuadParams
 from .rotations import cross3, np_clip
@@ -141,7 +142,9 @@ class EffectivenessKF:
         self.P.flat[:: self.n + 1] += np.where(excited, self.q**2 * dt, 0.0)
         S = Phi @ self.P @ Phi.T
         S.flat[:: len(y) + 1] += r_std**2
-        K = np.linalg.solve(S, Phi @ self.P).T
+        # S is symmetric positive definite: Cholesky solve (LAPACK dposv)
+        _, X, info = dposv(S, Phi @ self.P)
+        K = (X if info == 0 else np.linalg.solve(S, Phi @ self.P)).T
         K[~excited, :] = 0.0
         innov = y - Phi @ self.eta
         self.eta = np_clip(self.eta + K @ innov, self.lo, self.hi)
