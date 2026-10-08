@@ -45,6 +45,7 @@ disjoint from all evaluation seeds (see ``rotorfault.experiments.calibration``).
 from __future__ import annotations
 
 import math
+from collections import deque
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -60,13 +61,26 @@ class FDIConfig:
     filter_zeta: float = 0.7071
     # per-row residual noise (N, N m, N m, N m); calibrated, see calibration.py
     sigma: np.ndarray = field(default_factory=lambda: np.array([0.08, 2.0e-3, 2.0e-3, 1.0e-3]))
+    # assumed relative uncertainty of inertia and motor time constant (used to widen
+    # the residual scale during manoeuvres; matches the parameter spread simulated)
+    unc_inertia: float = 0.05
+    unc_tau: float = 0.10
     kf_r_inflation: float = 4.0  # coloured-noise inflation of R in the KF
     kf_q: float = 0.6  # random-walk intensity of eta (1/sqrt(s))
+    excitation_min: float = 0.2  # N; below this predicted thrust eta_i is frozen
+    actuator_delay_steps: int = 1  # known command transport delay (control periods)
     eta_min: float = 0.0
     eta_max: float = 1.1
-    delta_min: float = 0.10  # smallest LOE the CUSUM is designed for
-    threshold: float = 40.0  # CUSUM alarm threshold (log-likelihood units)
-    cusum_max: float = 1e4
+    # healthy-baseline learning: eta_hat is averaged over [baseline_start,
+    # detect_after) (initial hover, assumed fault-free); detection starts afterwards
+    use_baseline: bool = True
+    baseline_start: float = -2.5
+    detect_after: float = 0.0
+    # bank of CUSUM tests, one per design LOE magnitude (approximates the GLR test
+    # for an unknown fault size); each has its own threshold (log-likelihood units)
+    deltas: tuple = (0.15, 0.3, 0.6)
+    thresholds: np.ndarray = field(default_factory=lambda: np.array([2000.0, 2000.0, 2000.0]))
+    cusum_max: float = 1e5
 
 
 @dataclass
@@ -77,6 +91,20 @@ class FDIOutput:
     alarm_time: float  # nan if no alarm yet
     cusum: np.ndarray
     residual: np.ndarray
+    eta_ref: np.ndarray  # healthy baseline learned before detection is enabled
+    sigma: np.ndarray  # residual scale used at this step
+    cusum_bank: np.ndarray  # max over rotors of each CUSUM in the bank (raw units)
+
+    @property
+    def loe_hat(self) -> np.ndarray:
+        """Estimated loss of effectiveness relative to the healthy baseline."""
+        return 1.0 - self.eta_hat / self.eta_ref
+
+
+def hover_signature_norm(params: QuadParams, sigma: np.ndarray) -> float:
+    """|d_j| at nominal hover thrust (identical for the four rotors)."""
+    col = params.mixer()[:, 0]
+    return float(params.hover_thrust * np.linalg.norm(col / sigma))
 
 
 class RotorFDI:
@@ -96,6 +124,8 @@ class RotorFDI:
         self.J = np.diag(params.inertia).copy()
         self.s = params.spin_dir
         self.n_ch = 3 + 3 + 4 + 1  # gyro, nonlinear terms, thrusts, collective
+        self._absB = np.abs(self.B[1:4])
+        self._I4 = np.eye(4)
         self.reset()
 
     # ------------------------------------------------------------------
@@ -106,14 +136,22 @@ class RotorFDI:
         self._primed = False
         w_h = math.sqrt(P.hover_thrust / P.k_f)
         self.omega_hat = np.full(4, w_h)  # predicted rotor speeds
+        self._cmd_fifo = deque(maxlen=self.cfg.actuator_delay_steps + 1)
         self.eta_hat = np.ones(4)
         self.Pk = np.eye(4) * 1e-3
-        self.g = np.zeros(4)
+        self.g = np.zeros((len(self.cfg.deltas), 4))
+        self._deltas = np.asarray(self.cfg.deltas, dtype=float)[:, None]
         self.alarm = False
         self.isolated = -1
         self.alarm_time = float("nan")
+        self.alarm_bank = -1
         self.t = 0.0
         self.last_residual = np.zeros(4)
+        self.last_sigma = self.cfg.sigma.copy()
+        self.eta_ref = np.ones(4)
+        self._ref_sum = np.zeros(4)
+        self._ref_n = 0
+        self._ref_done = False
 
     def _motor_model(self, f_cmd: np.ndarray):
         """Propagate the nominal motor model over one step; returns (f_pred, dOmega)."""
@@ -135,14 +173,15 @@ class RotorFDI:
     ) -> FDIOutput:
         """One FDI step.
 
-        ``gyro`` must be bias-corrected; ``f_cmd_applied`` are the thrust commands that
-        were sent over the step that just ended; ``v_body`` is the estimated velocity
+        ``gyro`` must be bias-corrected; ``f_cmd_applied`` is the latest thrust command
+        sent (the known transport delay is applied internally); ``v_body`` is the estimated velocity
         in body axes (for the nominal drag term in the collective row).
         """
         P = self.P
         c = self.cfg
         self.t = t
-        f_pred, dW = self._motor_model(f_cmd_applied)
+        self._cmd_fifo.append(np.asarray(f_cmd_applied, dtype=float))
+        f_pred, dW = self._motor_model(self._cmd_fifo[0])
         w = gyro
         J = self.J
         h_z = -P.rotor_inertia * float(self.s @ self.omega_hat)
@@ -172,33 +211,67 @@ class RotorFDI:
         y[1:4] = J * dw_f + nonlin_f
         Phi = self.B * f_f[None, :]
 
+        # Adaptive residual scale: calibrated floor plus the residual that the assumed
+        # parametric uncertainty can produce *at this instant* (inertia error times
+        # angular acceleration, motor-lag error times thrust rate).
+        fdot = np.abs(x2[6:10])
+        unc = np.empty(4)
+        lag = c.unc_tau * P.tau_motor
+        unc[0] = lag * fdot.sum()
+        unc[1:4] = c.unc_inertia * np.abs(J * dw_f) + lag * (self._absB @ fdot)
+        sig = np.sqrt(c.sigma**2 + unc**2)
+        self.last_sigma = sig
+
         # ---------------- Kalman filter on eta ----------------
-        self.Pk = self.Pk + np.eye(4) * (c.kf_q**2 * self.dt)
-        Rk = np.diag((c.sigma * c.kf_r_inflation) ** 2)
-        S = Phi @ self.Pk @ Phi.T + Rk
+        # A rotor commanded (near) idle carries no information about its own
+        # effectiveness: its estimate and covariance are frozen (no random walk,
+        # no update) instead of being allowed to drift.
+        excited = f_f > c.excitation_min
+        self.Pk = self.Pk + np.diag(np.where(excited, c.kf_q**2 * self.dt, 0.0))
+        S = Phi @ self.Pk @ Phi.T + np.diag((sig * c.kf_r_inflation) ** 2)
         K = np.linalg.solve(S, Phi @ self.Pk).T
+        K[~excited, :] = 0.0
         innov = y - Phi @ self.eta_hat
         self.eta_hat = np_clip(self.eta_hat + K @ innov, c.eta_min, c.eta_max)
-        self.Pk = (np.eye(4) - K @ Phi) @ self.Pk
+        self.Pk = (self._I4 - K @ Phi) @ self.Pk
         self.Pk = 0.5 * (self.Pk + self.Pk.T)
 
+        # ---------------- healthy baseline ----------------
+        if t < c.detect_after:
+            if c.use_baseline and t >= c.baseline_start:
+                self._ref_sum += self.eta_hat
+                self._ref_n += 1
+        elif not self._ref_done:
+            if self._ref_n > 0:
+                self.eta_ref = self._ref_sum / self._ref_n
+            self._ref_done = True
+
         # ---------------- CUSUM detection / isolation ----------------
-        r = (y - Phi.sum(axis=1)) / c.sigma
+        Phi_ref = Phi * self.eta_ref[None, :]
+        r = (y - Phi_ref.sum(axis=1)) / sig
         self.last_residual = r
-        D = -Phi / c.sigma[:, None]  # columns = signatures
+        D = -Phi_ref / sig[:, None]  # columns = fault signatures
         dn = np.sqrt((D * D).sum(axis=0)) + 1e-12
         tj = (D.T @ r) / dn
-        mu = c.delta_min * dn
-        self.g = np_clip(self.g + mu * (tj - 0.5 * mu), 0.0, c.cusum_max)
-        if not self.alarm and self.g.max() > c.threshold:
+        mu = self._deltas * dn[None, :]
+        if self._ref_done:
+            self.g = np_clip(self.g + mu * (tj[None, :] - 0.5 * mu), 0.0, c.cusum_max)
+        h = np.asarray(c.thresholds, dtype=float)
+        ratio = self.g / h[:, None]  # normalised decision statistics, alarm at 1
+        if not self.alarm and ratio.max() > 1.0:
+            k = int(np.argmax(ratio.max(axis=1)))
             self.alarm = True
-            self.isolated = int(np.argmax(self.g))
+            self.isolated = int(np.argmax(self.g[k]))
             self.alarm_time = t
+            self.alarm_bank = k
         return FDIOutput(
             eta_hat=self.eta_hat.copy(),
             alarm=self.alarm,
             isolated=self.isolated,
             alarm_time=self.alarm_time,
-            cusum=self.g.copy(),
+            cusum=ratio.max(axis=0),
+            cusum_bank=self.g.max(axis=1),
             residual=r,
+            eta_ref=self.eta_ref,
+            sigma=sig,
         )

@@ -268,7 +268,7 @@ class SensorParams:
       low-pass filtering on a vibrating airframe, not the datasheet noise density.
       Bias follows a random walk; range +-2000 deg/s like common FPV IMUs.
     * Accelerometer 0.2 m/s^2 per sample (vibration dominated).
-    * Motion capture at 100 Hz: 1 mm position, 0.3 deg attitude.
+    * Motion capture at 100 Hz: 1 mm position, 0.3 deg attitude, 10 ms latency.
     """
 
     gyro_noise: float = 0.03  # rad/s
@@ -280,6 +280,7 @@ class SensorParams:
     mocap_rate: float = 100.0  # Hz
     mocap_pos_noise: float = 0.001  # m
     mocap_att_noise: float = np.deg2rad(0.3)  # rad
+    mocap_latency: float = 0.010  # s, motion-capture pipeline latency
 
     def scaled(self, gyro_scale: float = 1.0) -> SensorParams:
         return dataclasses.replace(self, gyro_noise=self.gyro_noise * gyro_scale)
@@ -290,10 +291,15 @@ class SensorParams:
 # --------------------------------------------------------------------------------------
 @dataclass(frozen=True)
 class SimConfig:
-    """Timing. Physics: RK4 at 1 kHz. Control, estimation and FDI: 500 Hz."""
+    """Timing. Physics: RK4 at 1 kHz. Control, estimation and FDI: 500 Hz.
+
+    ``actuator_delay_steps``: transport delay between computing a command and the ESC
+    applying it (one control period = 2 ms by default: computation + DShot frame).
+    """
 
     dt_ctrl: float = 0.002
     physics_substeps: int = 2
+    actuator_delay_steps: int = 1
 
     @property
     def dt_phys(self) -> float:

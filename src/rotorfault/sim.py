@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import math
+from collections import deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
 import numpy as np
 
+from .disturbance import Disturbance, DisturbanceParams
 from .dynamics import QuadDynamics, hover_state, thrust_to_speed
 from .faults import FaultSchedule
 from .fdi import FDIConfig
@@ -30,8 +32,12 @@ class Scenario:
     reference: Callable[[float], Reference] = field(default_factory=Hover)
     faults: FaultSchedule = field(default_factory=FaultSchedule)
     sensors: SensorParams = field(default_factory=SensorParams)
+    disturbance: DisturbanceParams = field(default_factory=DisturbanceParams)
     uncertainty: bool = True
     init_position: tuple = (0.0, 0.0, 2.0)
+    # closed-loop settling before t = 0 so integrators have absorbed the parameter
+    # mismatch when the experiment starts (identical for all baselines)
+    settle_time: float = 3.0
 
 
 @dataclass
@@ -48,11 +54,13 @@ class SimResult:
     eta_hat: np.ndarray
     eta_used: np.ndarray
     mode: np.ndarray
-    cusum: np.ndarray
-    residual: np.ndarray  # normalised FDI residual (y - Phi 1) / sigma
+    cusum: np.ndarray  # (N, 4) normalised decision statistic per rotor (alarm at 1)
+    residual: np.ndarray  # raw FDI residual y - Phi diag(eta_ref) 1 (N, N m, N m, N m)
     p_est: np.ndarray
+    cusum_bank: np.ndarray  # (N, n_bank) raw CUSUM maxima per design magnitude
     alarm_time: float
     isolated: int
+    eta_ref: np.ndarray
     switch_partial: float
     switch_relaxed: float
     crashed: bool
@@ -86,12 +94,16 @@ def simulate(
 ) -> SimResult:
     cfg = cfg or SimConfig()
     ss = np.random.SeedSequence(seed)
-    rng_par, rng_sens = (np.random.default_rng(s) for s in ss.spawn(2))
+    rng_par, rng_sens, rng_dist = (np.random.default_rng(s) for s in ss.spawn(3))
     nominal = nominal_params()
     true_p = perturbed_params(rng_par, nominal) if scenario.uncertainty else nominal
     dyn = QuadDynamics(true_p)
     sens = Sensors(scenario.sensors, rng_sens, cfg.dt_ctrl)
-    stack = FlightStack(baseline, cfg.dt_ctrl, nominal, fdi_cfg, options)
+    dist_proc = Disturbance(scenario.disturbance, rng_dist, cfg.dt_ctrl)
+    lat = int(round(scenario.sensors.mocap_latency / cfg.dt_ctrl))
+    stack = FlightStack(baseline, cfg.dt_ctrl, nominal, fdi_cfg, options, mocap_latency_steps=lat)
+    pose_hist = deque(maxlen=lat + 1)
+    cmd_fifo = deque(maxlen=cfg.actuator_delay_steps + 1)
 
     x = hover_state(true_p, scenario.init_position)
     # rotor speeds that hover the *true* vehicle with the nominal command map
@@ -99,6 +111,7 @@ def simulate(
     stack.initialise(x[0:3], x[6:10])
 
     n = int(round(scenario.duration / cfg.dt_ctrl))
+    n_settle = int(round(scenario.settle_time / cfg.dt_ctrl))
     log_t = np.zeros(n)
     log_x = np.zeros((n, 17))
     log_ref = np.zeros((n, 3))
@@ -110,6 +123,7 @@ def simulate(
     log_mode = np.zeros(n, dtype=np.int8)
     log_cusum = np.zeros((n, 4))
     log_resid = np.zeros((n, 4))
+    log_bank = np.zeros((n, len(stack.fdi.cfg.deltas)))
     log_est = np.zeros((n, 3))
 
     faults = scenario.faults
@@ -117,16 +131,23 @@ def simulate(
     w_cmd = x[13:17].copy()
     crashed, crash_time, reason = False, math.nan, ""
     k_end = n
-    for k in range(n):
+    for k in range(-n_settle, n):
         t = k * cfg.dt_ctrl
         eta = faults.eta(t)
-        sf = dyn.specific_force(x, w_cmd, eta)
+        dist = dist_proc.step()
+        sf = dyn.specific_force(x, w_cmd, eta, dist)
         imu = sens.imu(x[10:13], sf)
-        mocap = sens.mocap(t, x[0:3], x[6:10])
+        pose_hist.append((x[0:3].copy(), x[6:10].copy()))
+        mocap = sens.mocap(t, *pose_hist[0])
         ref = scenario.reference(t)
         onset_known = onset is not None and t >= onset
         f = stack.update(t, imu, mocap, ref, eta, onset_known)
-        w_cmd = thrust_to_speed(f, nominal)
+        cmd_fifo.append(thrust_to_speed(f, nominal))
+        w_cmd = cmd_fifo[0]
+        if k < 0:  # settling phase before t = 0 (not logged, never faulted)
+            for _ in range(cfg.physics_substeps):
+                x = dyn.step(x, w_cmd, eta, cfg.dt_phys, dist)
+            continue
 
         log_t[k] = t
         log_x[k] = x
@@ -139,11 +160,12 @@ def simulate(
         log_eta_used[k] = stack.eta_used if stack.mode != 2 else 0.0
         log_mode[k] = stack.mode
         log_cusum[k] = fd.cusum
-        log_resid[k] = fd.residual
+        log_resid[k] = fd.residual * fd.sigma
+        log_bank[k] = fd.cusum_bank
         log_est[k] = stack.est.p
 
         for _ in range(cfg.physics_substeps):
-            x = dyn.step(x, w_cmd, eta, cfg.dt_phys)
+            x = dyn.step(x, w_cmd, eta, cfg.dt_phys, dist)
 
         err = norm3(x[0:3] - ref.p)
         if x[2] <= 0.0:
@@ -177,9 +199,11 @@ def simulate(
         mode=log_mode[sl],
         cusum=log_cusum[sl],
         residual=log_resid[sl],
+        cusum_bank=log_bank[sl],
         p_est=log_est[sl],
         alarm_time=fd.alarm_time,
         isolated=fd.isolated,
+        eta_ref=fd.eta_ref.copy(),
         switch_partial=stack.switch_time[1],
         switch_relaxed=stack.switch_time[2],
         crashed=crashed,

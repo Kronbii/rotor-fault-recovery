@@ -63,6 +63,7 @@ class FlightStack:
         fdi_cfg: FDIConfig | None = None,
         options: StackOptions | None = None,
         gains: SE3Gains | None = None,
+        mocap_latency_steps: int = 0,
     ):
         if baseline not in BASELINES:
             raise ValueError(f"unknown baseline {baseline!r}")
@@ -70,7 +71,7 @@ class FlightStack:
         self.P = params or nominal_params()
         self.dt = dt
         self.opt = options or StackOptions()
-        self.est = StateEstimator(dt)
+        self.est = StateEstimator(dt, latency_steps=mocap_latency_steps)
         self.ctrl = SE3Controller(self.P, gains, dt)
         self.alloc = PriorityAllocator(self.P.mixer(), self.P.f_min, self.P.f_max)
         self.fdi = RotorFDI(self.P, dt, fdi_cfg)

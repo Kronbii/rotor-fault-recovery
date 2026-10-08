@@ -26,10 +26,11 @@ from .trajectory import Reference
 
 @dataclass
 class SE3Gains:
-    # position loop, acceleration units (1/s^2, 1/s, 1/s^3)
-    kp: np.ndarray = field(default_factory=lambda: np.array([6.0, 6.0, 8.0]))
-    kv: np.ndarray = field(default_factory=lambda: np.array([4.5, 4.5, 5.0]))
-    ki: np.ndarray = field(default_factory=lambda: np.array([1.5, 1.5, 2.0]))
+    # position loop, acceleration units (1/s^2, 1/s, 1/s^3); closed-loop poles
+    # (-2, -2, -1) rad/s horizontally and (-3.6, -1.4, -1) rad/s vertically
+    kp: np.ndarray = field(default_factory=lambda: np.array([8.0, 8.0, 10.0]))
+    kv: np.ndarray = field(default_factory=lambda: np.array([5.0, 5.0, 6.0]))
+    ki: np.ndarray = field(default_factory=lambda: np.array([4.0, 4.0, 5.0]))
     i_limit: float = 1.0  # m s
     # attitude loop: natural frequency / damping per axis
     att_wn: np.ndarray = field(default_factory=lambda: np.array([18.0, 18.0, 7.0]))
@@ -72,6 +73,10 @@ class SE3Controller:
         self.int_p = np_clip(self.int_p + ep * self.dt, -g.i_limit, g.i_limit)
         a = -g.kp * ep - g.kv * ev - g.ki * self.int_p + ref.a
         a[2] += self.P.g
+        # nominal drag feed-forward along the reference velocity
+        vr = ref.v
+        P = self.P
+        a += (P.drag_lin * vr + P.drag_quad * norm3(vr) * vr) / P.mass
         # thrust / tilt limits
         a[2] = max(a[2], 0.3 * self.P.g)
         hmax = a[2] * np.tan(np.deg2rad(g.max_tilt_deg))

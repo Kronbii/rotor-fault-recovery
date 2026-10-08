@@ -35,7 +35,7 @@ class Sensors:
         self.gyro_bias = rng.normal(0.0, sp.gyro_bias_init, 3)
         self.accel_bias = rng.normal(0.0, sp.accel_bias, 3)
         self._mocap_period = 1.0 / sp.mocap_rate
-        self._next_mocap = 0.0
+        self._next_mocap: float | None = None
         self._buf = np.empty((0, 9))
         self._k = 0
 
@@ -58,6 +58,8 @@ class Sensors:
 
     def mocap(self, t: float, p_true: np.ndarray, q_true: np.ndarray) -> MocapSample | None:
         """Returns a sample when one is due (100 Hz), otherwise ``None``."""
+        if self._next_mocap is None:
+            self._next_mocap = t
         if t + 1e-9 < self._next_mocap:
             return None
         self._next_mocap += self._mocap_period

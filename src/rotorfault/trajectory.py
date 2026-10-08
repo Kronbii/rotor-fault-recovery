@@ -67,3 +67,30 @@ class FigureEight:
         v = np.array([dx * sd, dy * sd, 0.0])
         a = np.array([ddx * sd**2 + dx * sdd, ddy * sd**2 + dy * sdd, 0.0])
         return Reference(p, v, a)
+
+
+class WaypointSteps:
+    """Aggressive position steps (used only to test false alarms on manoeuvres that
+    were *not* part of the FDI calibration set)."""
+
+    def __init__(self, waypoints=None, dwell=2.0, t0=1.0):
+        self.wps = np.array(
+            waypoints
+            if waypoints is not None
+            else [
+                (0.0, 0.0, 2.0),
+                (1.5, 0.0, 2.0),
+                (1.5, 1.5, 2.6),
+                (0.0, 1.5, 2.0),
+                (-1.0, 0.0, 1.6),
+                (0.0, 0.0, 2.0),
+            ],
+            dtype=float,
+        )
+        self.dwell = dwell
+        self.t0 = t0
+
+    def __call__(self, t: float) -> Reference:
+        k = 0 if t < self.t0 else int((t - self.t0) // self.dwell) + 1
+        p = self.wps[k % len(self.wps)]
+        return Reference(p.copy(), np.zeros(3), np.zeros(3))

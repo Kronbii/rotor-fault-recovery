@@ -8,16 +8,17 @@ State vector (17):
     x[13:17] rotor speeds Omega_i (rad/s)
 
 Equations (body frame for rotation, world for translation):
-    m dv/dt   = -m g e3 + R [0, 0, T] - R D R^T v - c |v| v
+    m dv/dt   = -m g e3 + R [0, 0, T] - R D R^T v - c |v| v + F_d
     dq/dt     = 0.5 q (x) [0, omega]
     J domega/dt = tau_thrust + tau_yaw + tau_rotor_accel
-                  - omega x (J omega + h_r) - K_w omega
+                  - omega x (J omega + h_r) - K_w omega + tau_d
     dOmega_i/dt = (Omega_cmd_i - Omega_i) / tau_m,  Omega_cmd in [Omega_min, Omega_max]
 
 with rotor thrust ``f_i = eta_i k_f s_i^kf Omega_i^2`` (``eta_i`` = loss-of-effectiveness
 factor, ``s_i^kf`` = per-rotor manufacturing spread), yaw torque ``s_i kappa f_i``,
 rotor angular momentum ``h_r = -J_r sum_i s_i Omega_i e3`` and the reaction torque of
-accelerating rotors ``s_i J_r dOmega_i/dt`` about z.
+accelerating rotors ``s_i J_r dOmega_i/dt`` about z. ``F_d`` / ``tau_d`` are external
+disturbances (turbulence, see :mod:`rotorfault.disturbance`).
 
 The derivative is written with scalar Python arithmetic; for 17 states this is several
 times faster than small-array NumPy operations and dominates simulation speed.
@@ -33,6 +34,7 @@ from .params import QuadParams
 from .rotations import np_clip, quat_to_rot
 
 N_STATE = 17
+_NO_DIST = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
 
 class QuadDynamics:
@@ -55,8 +57,12 @@ class QuadDynamics:
         kf = self._kf
         return np.array([eta[i] * kf[i] * omega_rotor[i] ** 2 for i in range(4)])
 
-    def deriv(self, x: list, wcmd: list, eta: list) -> list:
-        """Time derivative of the state (lists of floats in and out)."""
+    def deriv(self, x: list, wcmd: list, eta: list, dist=_NO_DIST) -> list:
+        """Time derivative of the state (lists of floats in and out).
+
+        ``dist`` = (Fx, Fy, Fz, tx, ty, tz): external disturbance force (world frame,
+        N) and torque (body frame, N m), e.g. turbulence.
+        """
         P = self.p
         m = P.mass
         g = P.g
@@ -112,9 +118,9 @@ class QuadDynamics:
         sp = math.sqrt(vx * vx + vy * vy + vz * vz)
         cq = P.drag_quad * sp
         im = 1.0 / m
-        ax = (r00 * fbx + r01 * fby + r02 * fbz - cq * vx) * im
-        ay = (r10 * fbx + r11 * fby + r12 * fbz - cq * vy) * im
-        az = (r20 * fbx + r21 * fby + r22 * fbz - cq * vz) * im - g
+        ax = (r00 * fbx + r01 * fby + r02 * fbz - cq * vx + dist[0]) * im
+        ay = (r10 * fbx + r11 * fby + r12 * fbz - cq * vy + dist[1]) * im
+        az = (r20 * fbx + r21 * fby + r22 * fbz - cq * vz + dist[2]) * im - g
 
         # quaternion kinematics
         dqw = 0.5 * (-qx * wx - qy * wy - qz * wz)
@@ -129,29 +135,29 @@ class QuadDynamics:
         cx = wy * Hz - wz * Hy
         cy = wz * Hx - wx * Hz
         cz = wx * Hy - wy * Hx
-        dwx = (tx - cx - Kx * wx) / Jx
-        dwy = (ty - cy - Ky * wy) / Jy
-        dwz = (tz - cz - Kz * wz) / Jz
+        dwx = (tx - cx - Kx * wx + dist[3]) / Jx
+        dwy = (ty - cy - Ky * wy + dist[4]) / Jy
+        dwz = (tz - cz - Kz * wz + dist[5]) / Jz
 
         return [vx, vy, vz, ax, ay, az, dqw, dqx, dqy, dqz, dwx, dwy, dwz, *dW]
 
-    def specific_force(self, x, wcmd, eta) -> np.ndarray:
+    def specific_force(self, x, wcmd, eta, dist=_NO_DIST) -> np.ndarray:
         """Specific force in body frame (what an ideal accelerometer measures)."""
-        d = self.deriv(list(x), list(wcmd), list(eta))
+        d = self.deriv(x.tolist(), list(wcmd), list(eta), dist)
         R = _rot(x[6:10])
         a_world = np.array(d[3:6]) + np.array([0.0, 0.0, self.p.g])
         return R.T @ a_world
 
-    def step(self, x: np.ndarray, wcmd, eta, dt: float) -> np.ndarray:
+    def step(self, x: np.ndarray, wcmd, eta, dt: float, dist=_NO_DIST) -> np.ndarray:
         """One RK4 step; rotor commands and eta are held constant over the step."""
         xl = x.tolist()
         wc = [float(w) for w in wcmd]
         et = [float(e) for e in eta]
         h2 = 0.5 * dt
-        k1 = self.deriv(xl, wc, et)
-        k2 = self.deriv([a + h2 * b for a, b in zip(xl, k1)], wc, et)
-        k3 = self.deriv([a + h2 * b for a, b in zip(xl, k2)], wc, et)
-        k4 = self.deriv([a + dt * b for a, b in zip(xl, k3)], wc, et)
+        k1 = self.deriv(xl, wc, et, dist)
+        k2 = self.deriv([a + h2 * b for a, b in zip(xl, k1)], wc, et, dist)
+        k3 = self.deriv([a + h2 * b for a, b in zip(xl, k2)], wc, et, dist)
+        k4 = self.deriv([a + dt * b for a, b in zip(xl, k3)], wc, et, dist)
         h6 = dt / 6.0
         xn = [a + h6 * (b + 2 * c + 2 * d + e) for a, b, c, d, e in zip(xl, k1, k2, k3, k4)]
         # renormalise the quaternion
