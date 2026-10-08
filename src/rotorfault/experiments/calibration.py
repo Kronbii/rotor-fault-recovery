@@ -108,3 +108,9 @@ def calibrate(
     }
     save_json(store, db)
     return _cfg(sigma, thresholds, variant)
+
+
+def calibration_dict(paths: Paths, quick: bool = False) -> dict:
+    """The main (1x gyro noise) calibration as a plain dict, computing it if needed."""
+    c = calibrate(paths, 1.0, quick=quick)
+    return dict(sigma=c.sigma.tolist(), thresholds=list(c.thresholds))

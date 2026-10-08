@@ -110,7 +110,8 @@ def _load(paths: Paths, name: str) -> CachedRun:
 
 
 def _cal(paths: Paths) -> dict:
-    return load_json(paths.results / "calibration.json")["gyro_x1"]
+    db = load_json(paths.results / "calibration.json")
+    return db["gyro_x1"] if "gyro_x1" in db else db["gyro_x1_quick"]
 
 
 # ======================================================================================

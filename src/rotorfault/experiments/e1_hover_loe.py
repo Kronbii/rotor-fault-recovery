@@ -11,7 +11,8 @@ from __future__ import annotations
 import numpy as np
 
 from ..stack import BASELINES
-from .common import SEED_E1, Paths, load_json, nan_stats, pmap, save_csv, save_json, wilson_interval
+from .calibration import calibration_dict
+from .common import SEED_E1, Paths, nan_stats, pmap, save_csv, save_json, wilson_interval
 from .runner import run_task
 
 NAME = "e1_hover_loe"
@@ -72,7 +73,7 @@ def summarise(rows: list[dict]) -> dict:
 
 
 def run(paths: Paths, quick: bool = False) -> dict:
-    cal = load_json(paths.results / "calibration.json")["gyro_x1" + ("_quick" if quick else "")]
+    cal = calibration_dict(paths, quick)
     rows = pmap(run_task, tasks(paths, cal, quick), desc=NAME)
     summary = summarise(rows)
     summary["config"] = dict(

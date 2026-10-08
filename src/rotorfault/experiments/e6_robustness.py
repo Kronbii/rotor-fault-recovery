@@ -15,7 +15,8 @@ Each point: four rotors x two seeds.
 
 from __future__ import annotations
 
-from .common import Paths, load_json, nan_stats, pmap, save_csv, save_json, wilson_interval
+from .calibration import calibration_dict
+from .common import Paths, nan_stats, pmap, save_csv, save_json, wilson_interval
 from .runner import run_task
 
 NAME = "e6_robustness"
@@ -57,7 +58,7 @@ def _task(param, value, rot, s, cal):
 
 
 def run(paths: Paths, quick: bool = False) -> dict:
-    cal = load_json(paths.results / "calibration.json")["gyro_x1" + ("_quick" if quick else "")]
+    cal = calibration_dict(paths, quick)
     sweeps = {k: (v[:2] if quick else v) for k, v in SWEEPS.items()}
     rotors = (0,) if quick else range(4)
     n_seeds = 1 if quick else 2

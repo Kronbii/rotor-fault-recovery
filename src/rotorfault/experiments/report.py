@@ -56,7 +56,9 @@ def _tex_table(header, rows, caption, label, colspec=None, wide=False):
 
 # ======================================================================================
 def table_e1(e1):
-    mags = [0.2, 0.4, 0.6, 0.7, 0.8, 0.9]
+    have = sorted({x["magnitude"] for x in e1["rows"]})
+    mags = [m for m in have if any(abs(m - w) < 1e-9 for w in (0.2, 0.4, 0.6, 0.7, 0.8, 0.9))]
+    mags = mags or [m for m in have if m > 0]
     rows = []
     for m in mags:
         row = [f"{int(m * 100)} %"]
@@ -537,21 +539,27 @@ def write_reports(paths: Paths | None = None) -> dict:
         wide = key in ("table_e2_noise", "table_e4", "table_e7", "table_e1")
         cap_tex = cap.replace("%", r"\%") + " " + note.replace("%", r"\%")
         (gen / f"{key}.tex").write_text(_tex_table(header, rows, cap_tex, label, wide=wide) + "\n")
-    h = headline(paths)
+    et = e6_text(e6)
+    for doc in (paths.root / "README.md", paths.paper / "report.md"):
+        _inject(doc, "e6_text", et)
+    et_tex = et.split(". ", 1)[1] if et.startswith("Generated from") else et
+    (gen / "e6_text.tex").write_text(et_tex.replace("%", r"\%").replace("`", "") + "\n")
+    (paths.results / "summary.md").write_text("\n".join(md_all))
+    try:
+        h = headline(paths)
+    except (StopIteration, KeyError, IndexError, TypeError):
+        # the quick smoke version lacks some of the points quoted in the abstract
+        print("  headline numbers need the full study (not --quick); abstract not updated")
+        return {}
     ab = abstract_text(h)
     for doc in (paths.root / "README.md", paths.paper / "report.md"):
         _inject(doc, "abstract", ab)
     (gen / "abstract.tex").write_text(ab.replace("%", r"\%") + "\n")
-    et = e6_text(e6)
-    for doc in (paths.root / "README.md", paths.paper / "report.md"):
-        _inject(doc, "e6_text", et)
-    (gen / "e6_text.tex").write_text(et.replace("%", r"\%").replace("`", "") + "\n")
     tf = paths.results / "timings.json"
     if tf.exists():
         minutes = load_json(tf)["total"] / 60.0
         _inject_inline(paths.root / "README.md", "runtime", f"{max(1, round(minutes + 0.5))}")
     (gen / "numbers.tex").write_text(_tex_macros(h))
-    (paths.results / "summary.md").write_text("\n".join(md_all))
     save_json(paths.results / "headline.json", h)
     print("  wrote results/summary.md, results/headline.json, paper/generated/*.tex")
     return h

@@ -7,11 +7,11 @@ by the estimated pipeline. Every rotor is failed in turn, several seeds each.
 from __future__ import annotations
 
 from ..stack import BASELINES
+from .calibration import calibration_dict
 from .common import (
     SEED_E4,
     SEED_E5,
     Paths,
-    load_json,
     nan_stats,
     pmap,
     save_csv,
@@ -91,7 +91,7 @@ def summarise(rows: list[dict]) -> list[dict]:
 
 
 def run_case(name: str, paths: Paths, quick: bool = False) -> dict:
-    cal = load_json(paths.results / "calibration.json")["gyro_x1" + ("_quick" if quick else "")]
+    cal = calibration_dict(paths, quick)
     rows = pmap(run_task, tasks(name, paths, cal, quick), desc=name)
     c = CASES[name]
     result = dict(

@@ -1,6 +1,6 @@
 """Run a single experiment; see rotorfault/experiments/e2_fdi_montecarlo.py for the definition.
 
-Requires the FDI calibration (`rotorfault calibrate`) to exist in results/.
+Computes the FDI calibration first if results/calibration.json does not have it.
 """
 
 import sys
