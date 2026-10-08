@@ -1,0 +1,100 @@
+{
+ "e1_passive_maxdev_50_cm": 28.3818,
+ "e1_est_maxdev_50_cm": 4.3419,
+ "e1_oracle_maxdev_50_cm": 4.28,
+ "e1_passive_lost_70": 3,
+ "e1_passive_lost_90": 8,
+ "e1_n": 8,
+ "e1_est_lost_any": 0,
+ "e1_est_total": 80,
+ "e1_est_maxdev_90_cm": 27.2452,
+ "e2_n_fault": 200,
+ "e2_detected": 200,
+ "e2_isolation_pct": 100.0,
+ "e2_delay_median_ms": 30.194345,
+ "e2_delay_p95_ms": 57.503729,
+ "e2_delay_low_bin_median_ms": 50.571403,
+ "e2_delay_high_bin_median_ms": 24.161892,
+ "e2_loe_abs_err_median_pts": 1.5493,
+ "e2_loe_abs_err_p95_pts": 4.7726,
+ "e2_false_alarms": 0,
+ "e2_free_minutes": 31.772395,
+ "e2_n_free": 100,
+ "e2_noise_max_scale": 8.0,
+ "e2_noise_max_deg": 13.750987,
+ "e2_noise_max_delay_ms": 25.194967,
+ "e2_noise_max_isolation_pct": 100.0,
+ "e2_noise_max_detected": 40,
+ "e2_noise_max_n": 40,
+ "e2_noise_max_fa": 0,
+ "e3_rmse_before_cm": 3.5289,
+ "e3_passive_transient_cm": 17.6273,
+ "e3_est_transient_cm": 3.5208,
+ "e3_passive_maxdev_cm": 24.6967,
+ "e3_est_maxdev_cm": 6.8253,
+ "e4_n": 32,
+ "e4_passive_lost": 32,
+ "e4_passive_ttl_s": 0.303,
+ "e4_est_lost": 0,
+ "e4_oracle_lost": 0,
+ "e4_est_maxdev_cm": 37.9242,
+ "e4_oracle_maxdev_cm": 21.5478,
+ "e4_est_settled_cm": 7.6312,
+ "e4_est_spin": 23.154471,
+ "e4_est_switch_ms": 62.0,
+ "e4_est_tilt_deg": 41.57395,
+ "e5_n": 24,
+ "e5_est_lost": 0,
+ "e5_passive_lost": 24,
+ "e5_est_maxdev_cm": 39.2362,
+ "e5_est_settled_cm": 18.3317,
+ "e7_no_baseline_fa_runs": 1,
+ "e7_no_baseline_fa_pre": 1,
+ "e7_no_baseline_delay_ms": 27.812772,
+ "e7_no_baseline_isolation_pct": 100.0,
+ "e7_no_adaptive_fa_runs": 0,
+ "e7_no_adaptive_fa_pre": 0,
+ "e7_no_adaptive_delay_ms": 25.358664,
+ "e7_no_adaptive_isolation_pct": 100.0,
+ "e7_single_cusum_fa_runs": 0,
+ "e7_single_cusum_fa_pre": 0,
+ "e7_single_cusum_delay_ms": 60.615908,
+ "e7_single_cusum_isolation_pct": 100.0,
+ "e7_n_free": 30,
+ "e7_n_fault": 60,
+ "e6_failures": {
+  "actuator_delay_ms": [
+   [
+    24,
+    5,
+    8
+   ]
+  ],
+  "motor_tau_ms": [
+   [
+    80,
+    8,
+    8
+   ],
+   [
+    100,
+    8,
+    8
+   ]
+  ],
+  "damping_scale": [],
+  "inertia_scale": [],
+  "turbulence_scale": [
+   [
+    3.0,
+    5,
+    8
+   ],
+   [
+    4.0,
+    6,
+    8
+   ]
+  ]
+ }
+}

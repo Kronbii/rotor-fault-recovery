@@ -117,9 +117,9 @@ def _cal(paths: Paths) -> dict:
 # Figure: architecture
 # ======================================================================================
 def fig_architecture(paths: Paths):
-    fig, ax = plt.subplots(figsize=(7.2, 3.0))
-    ax.set_xlim(0, 100)
-    ax.set_ylim(0, 35)
+    fig, ax = plt.subplots(figsize=(7.2, 3.1))
+    ax.set_xlim(0, 120)
+    ax.set_ylim(-4, 35)
     ax.axis("off")
 
     def box(x, y, w, h, text, fc="#eef4fc", ec=SERIES[0]):
@@ -128,49 +128,43 @@ def fig_architecture(paths: Paths):
                 (x, y), w, h, boxstyle="round,pad=0.3,rounding_size=1.0", fc=fc, ec=ec, lw=1.0
             )
         )
-        ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=7.0, color=INK)
+        ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=6.6, color=INK)
 
-    def arrow(p0, p1, text=None, off=(0, 1.0), ha="center"):
+    def arrow(p0, p1, text=None, at=None, ha="center"):
         ax.add_patch(
             FancyArrowPatch(p0, p1, arrowstyle="-|>", mutation_scale=8, color=INK2, lw=0.9)
         )
         if text:
-            ax.text(
-                (p0[0] + p1[0]) / 2 + off[0],
-                (p0[1] + p1[1]) / 2 + off[1],
-                text,
-                ha=ha,
-                fontsize=6.3,
-                color=INK2,
-            )
+            ax.text(at[0], at[1], text, ha=ha, va="center", fontsize=6.0, color=INK2)
 
     grey = dict(fc="#f3f2ef", ec=MUTED)
     green = dict(fc="#eaf7f1", ec=SERIES[2])
-    # top row: nominal loop
-    box(1, 25, 15, 8, "reference\nhover / figure-8", **grey)
-    box(22, 25, 16, 8, "SE(3) position and\nattitude control")
-    box(44, 25, 16, 8, "prioritised allocation\nB diag(eta) f")
-    box(66, 25, 16, 8, "5-inch quad: 6-DOF,\nrotor lag, turbulence", **grey)
-    box(87, 25, 12, 8, "rotor faults\neta_i(t)", fc="#fdf0ea", ec=SERIES[1])
-    # middle row: fault-tolerant parts
-    box(22, 13, 16, 8, "supervisor\nnominal / partial / relaxed", **green)
-    box(44, 13, 16, 8, "yaw-relaxed control\nLQR, spin about n")
-    # bottom row: sensing and diagnosis
-    box(22, 1, 16, 8, "FDI: filtered regression\nKF on eta + CUSUM bank", **green)
-    box(44, 1, 16, 8, "state estimator\n(attitude, p, v)", **grey)
-    box(66, 1, 16, 8, "gyro, accelerometer,\nmocap 100 Hz / 10 ms", **grey)
-    arrow((16.6, 29), (21.4, 29))
-    arrow((38.6, 29), (43.4, 29), "T, tau")
-    arrow((60.6, 29), (65.4, 29), "f_cmd")
-    arrow((86.4, 29), (82.6, 29))
-    arrow((74, 24.4), (74, 9.6), "measurements", off=(1.0, 0), ha="left")
-    arrow((65.4, 5), (60.6, 5))
-    arrow((43.4, 5), (38.6, 5), "rates, accel,\nf_cmd", off=(0, 1.0))
-    arrow((30, 9.6), (30, 12.4), "alarm, rotor j, eta_hat", off=(1.0, -0.4), ha="left")
-    arrow((36, 21.6), (46, 24.4), "eta_hat (partial loss)", off=(-1.5, 0.6), ha="right")
-    arrow((38.6, 17), (43.4, 17), "eta_j < 0.35", off=(0, 1.0))
-    arrow((60.6, 18), (67, 24.4), "f, rotor j idle", off=(3.0, -1.0), ha="left")
-    arrow((52, 9.6), (52, 12.4))
+    X = {1: 1, 2: 24, 3: 51, 4: 78, 5: 104}
+    W = {1: 17, 2: 20, 3: 20, 4: 20, 5: 15}
+    top, mid, bot, H = 25, 13, 1, 8
+    box(X[1], top, W[1], H, "reference\nhover / figure-8", **grey)
+    box(X[2], top, W[2], H, "SE(3) position and\nattitude control")
+    box(X[3], top, W[3], H, "prioritised allocation\nB diag(eta) f")
+    box(X[4], top, W[4], H, "5-inch quad: 6-DOF,\nrotor lag, turbulence", **grey)
+    box(X[5], top, W[5], H, "rotor faults\neta_i(t)", fc="#fdf0ea", ec=SERIES[1])
+    box(X[2], mid, W[2], H, "supervisor: nominal /\npartial / relaxed", **green)
+    box(X[3], mid, W[3], H, "yaw-relaxed control\n(LQR, spin about n)")
+    box(X[2], bot, W[2], H, "FDI: regression,\nKF on eta, CUSUM bank", **green)
+    box(X[3], bot, W[3], H, "state estimator\n(attitude, p, v)", **grey)
+    box(X[4], bot, W[4], H, "gyro, accelerometer,\nmocap 100 Hz, 10 ms", **grey)
+    yt = top + H / 2
+    arrow((18.6, yt), (23.4, yt))
+    arrow((44.6, yt), (50.4, yt), "T, tau", at=(47.5, yt + 5.6))
+    arrow((71.6, yt), (77.4, yt), "f_cmd", at=(74.5, yt + 5.6))
+    arrow((103.4, yt), (98.6, yt))
+    arrow((88, 24.4), (88, 9.6), "measurements", at=(89.2, 17), ha="left")
+    arrow((77.4, 5), (71.6, 5))
+    arrow((50.4, 5), (44.6, 5), "rates, accel, f_cmd", at=(47.5, -1.4))
+    arrow((34, 9.6), (34, 12.4), "alarm, rotor j, eta_hat", at=(35.2, 11.0), ha="left")
+    arrow((40, 21.6), (55, 24.4), "eta_hat (partial loss)", at=(39, 23.4), ha="right")
+    arrow((44.6, 17), (50.4, 17), "eta_j\n< 0.35", at=(47.5, 14.3))
+    arrow((71.6, 18), (82, 24.4), "f (rotor j idle)", at=(75.5, 22.6), ha="right")
+    arrow((61, 9.6), (61, 12.4))
     return _save(fig, paths, "fig_architecture.png")
 
 
@@ -496,7 +490,7 @@ def fig_e2_example(paths: Paths):
     t = 1e3 * (r.t[m] - 2.0)
     fig, axs = plt.subplots(1, 3, figsize=(7.2, 2.3))
     sig = np.array(cal["sigma"])
-    names = ["collective (/sigma_T)", "roll (/sigma_x)", "pitch (/sigma_y)", "yaw (/sigma_z)"]
+    names = ["collective", "roll", "pitch", "yaw"]
     for k in range(4):
         axs[0].plot(
             t, r.residual[m, k] / sig[k], color=SERIES[k], ls=ROTOR_LS[k], lw=1.1, label=names[k]
@@ -510,13 +504,14 @@ def fig_e2_example(paths: Paths):
     axs[1].text(150, 1.05, "alarm threshold", fontsize=6.5, color=INK2)
     axs[1].set_ylabel("CUSUM / threshold")
     axs[1].set_ylim(0, 2.0)
-    axs[1].legend(fontsize=6.0, loc="upper right", bbox_to_anchor=(1.0, 0.92))
+
     for j in range(4):
         axs[2].plot(t, r.eta_hat[m, j], color=SERIES[j], ls=ROTOR_LS[j], label=ROTOR_NAMES[j])
     axs[2].plot(t, r.eta_true[m, 2] * r.eta_ref[2], color=INK, lw=0.8, alpha=0.6, label="truth")
     axs[2].set_ylabel("eta_hat")
-    axs[2].legend(fontsize=5.8, loc="lower left", ncol=2)
-    axs[2].set_ylim(0.45, 1.1)
+    axs[2].legend(fontsize=5.8, loc="lower right", ncol=3, columnspacing=0.8)
+    axs[2].set_ylim(0.25, 1.1)
+    axs[2].set_yticks([0.6, 0.8, 1.0])
     for ax, letter in zip(axs, "abc"):
         ax.axvline(0, color=MUTED, lw=0.9)
         if np.isfinite(r.alarm_time):
@@ -672,9 +667,9 @@ def fig_e4(paths: Paths):
         ax.plot(r.t, r.thrust[:, j], color=SERIES[j], ls=ROTOR_LS[j], lw=1.1, label=ROTOR_NAMES[j])
     ax.axhline(nominal_params().f_max, color=INK2, lw=0.8)
     ax.text(5.2, nominal_params().f_max - 0.45, "rotor thrust limit", fontsize=6.5, color=INK2)
-    ax.set_ylabel("rotor thrust (N), proposed")
+    ax.set_ylabel("rotor thrust (N)")
     ax.set_xlabel("time (s)")
-    ax.legend(loc="center right", fontsize=6.5)
+    ax.legend(loc="center right", fontsize=6.5, title="proposed pipeline", title_fontsize=6.5)
     for a, letter in zip(axs.ravel(), "abcd"):
         _events(a, runs["estimated"])
         a.set_xlim(1.0, 10.0)
@@ -918,6 +913,58 @@ def fig_relaxed_family(paths: Paths):
     return _save(fig, paths, "fig_relaxed_family.png")
 
 
+def fig_e7(paths: Paths):
+    from .report import VARIANT_LABEL
+
+    res = load_json(paths.results / "e7_fdi_ablation.json")["variants"]
+    keys = list(VARIANT_LABEL)
+    labels = [VARIANT_LABEL[k].replace(" (", "\n(") for k in keys]
+    fig, axs = plt.subplots(1, 3, figsize=(7.2, 2.4))
+    y = np.arange(len(keys))[::-1]
+    fa = [100 * res[k]["false_alarm_runs"] / res[k]["n_free_runs"] for k in keys]
+    pre = [100 * res[k]["false_alarms_before_onset"] / res[k]["n_fault_runs"] for k in keys]
+    axs[0].barh(y + 0.18, fa, height=0.34, color=SERIES[1], label="fault-free runs")
+    axs[0].barh(
+        y - 0.18,
+        pre,
+        height=0.34,
+        color=SERIES[1],
+        alpha=0.5,
+        hatch="///",
+        edgecolor="white",
+        label="faulty runs, before onset",
+    )
+    axs[0].set_xlabel("runs with a false alarm (%)")
+    axs[0].legend(fontsize=6.3, loc="lower right")
+    med = [res[k]["delay_ms"]["median"] or np.nan for k in keys]
+    p95 = [res[k]["delay_ms"]["p95"] or np.nan for k in keys]
+    axs[1].barh(y + 0.18, med, height=0.34, color=SERIES[0], label="median")
+    axs[1].barh(
+        y - 0.18,
+        p95,
+        height=0.34,
+        color=SERIES[0],
+        alpha=0.5,
+        hatch="///",
+        edgecolor="white",
+        label="95th percentile",
+    )
+    axs[1].set_xlabel("detection delay (ms)")
+    axs[1].set_xlim(0, 125)
+    axs[1].legend(fontsize=6.3, loc="upper right")
+    iso = [100 * (res[k]["isolation_accuracy"] or 0) for k in keys]
+    axs[2].barh(y, iso, height=0.5, color=SERIES[2])
+    axs[2].set_xlim(0, 105)
+    axs[2].set_xlabel("isolation accuracy (%)")
+    for i, a in enumerate(axs):
+        a.set_yticks(y)
+        a.set_yticklabels(labels if i == 0 else [], fontsize=7)
+        a.grid(axis="y", visible=False)
+        _panel(a, "abc"[i])
+    fig.tight_layout(w_pad=0.8)
+    return _save(fig, paths, "fig_e7_ablation.png")
+
+
 def fig_summary(paths: Paths):
     """Key figure: E1 loss rate vs magnitude and E4 complete-loss recovery."""
     s = load_json(paths.results / "e1_hover_loe.json")
@@ -990,6 +1037,7 @@ def make_all_figures(paths: Paths | None = None) -> None:
     fig_e4_3d(paths)
     fig_e5(paths)
     fig_e6(paths)
+    fig_e7(paths)
     fig_summary(paths)
 
 

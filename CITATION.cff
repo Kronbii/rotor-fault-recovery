@@ -8,6 +8,7 @@ abstract: >-
 authors:
   - family-names: Kronbi
     given-names: Rami
+    affiliation: Independent researcher
 type: software
 version: 0.1.0
 date-released: 2026-10-08

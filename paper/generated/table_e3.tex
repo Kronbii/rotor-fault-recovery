@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{E3: figure-eight tracking with a 50 \% loss. Figure-eight (peak 3.3 m/s), 50 \% LOE on rotor 1 at t = 10 s; medians over 10 seeds, cm.}
+\label{tab:e3}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lccccc}
+\toprule
+Baseline & RMSE before & RMSE 0-3 s after & RMSE 3-10 s after & max dev. & lost \\
+\midrule
+Passive & 3.5 & 17.6 & 8.5 & 24.7 & 0/10 \\
+Oracle & 3.5 & 3.7 & 4.0 & 7.0 & 0/10 \\
+Estimated (proposed) & 3.5 & 3.5 & 3.9 & 6.8 & 0/10 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}

@@ -4,7 +4,14 @@ from __future__ import annotations
 
 import time
 
-from . import e1_hover_loe, e2_fdi_montecarlo, e3_trajectory, e4_complete_loss, e6_robustness
+from . import (
+    e1_hover_loe,
+    e2_fdi_montecarlo,
+    e3_trajectory,
+    e4_complete_loss,
+    e6_robustness,
+    e7_fdi_ablation,
+)
 from .calibration import calibrate
 from .common import Paths, default_paths, save_json
 
@@ -15,6 +22,7 @@ EXPERIMENTS = {
     "e4": e4_complete_loss.run,
     "e5": e4_complete_loss.run_e5,
     "e6": e6_robustness.run,
+    "e7": e7_fdi_ablation.run,
 }
 
 

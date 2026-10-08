@@ -29,26 +29,28 @@ def _md_table(header, rows):
     return "\n".join(out)
 
 
-def _tex_table(header, rows, caption, label, colspec=None):
+def _tex_table(header, rows, caption, label, colspec=None, wide=False):
     colspec = colspec or ("l" + "c" * (len(header) - 1))
+    env = "table*" if wide else "table"
 
     def esc(s):
         return str(s).replace("%", r"\%").replace("--", "--").replace("_", r"\_")
 
     lines = [
-        r"\begin{table}[t]",
+        r"\begin{" + env + "}[t]",
         r"\centering",
         r"\caption{" + caption + "}",
         r"\label{" + label + "}",
         r"\footnotesize",
         r"\setlength{\tabcolsep}{3pt}",
+        r"\begin{adjustbox}{max width=\linewidth}",
         r"\begin{tabular}{" + colspec + "}",
         r"\toprule",
         " & ".join(esc(h) for h in header) + r" \\",
         r"\midrule",
     ]
     lines += [" & ".join(esc(c) for c in r) + r" \\" for r in rows]
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{adjustbox}", r"\end{" + env + "}"]
     return "\n".join(lines)
 
 
@@ -232,6 +234,46 @@ def table_e6(e6):
     return header, rows, note
 
 
+VARIANT_LABEL = {
+    "full": "proposed (all elements)",
+    "no_baseline": "no healthy baseline",
+    "no_adaptive": "no adaptive residual scale",
+    "single_cusum": "single CUSUM (15 %)",
+}
+
+
+def table_e7(e7):
+    rows = []
+    for k, label in VARIANT_LABEL.items():
+        s = e7["variants"][k]
+        d = s["delay_ms"]
+        rows.append(
+            [
+                label,
+                f"{s['detected']}/{s['n_fault_runs']}",
+                f"{_f(d['median'], 0)} ({_f(d['p95'], 0)})",
+                _f(s["isolation_accuracy"], 1, 100) + " %",
+                _f(s["loe_abs_err"]["median"], 1, 100),
+                f"{s['false_alarm_runs']}/{s['n_free_runs']} (+{s['false_alarms_before_onset']})",
+                f"{s['lost_fault_runs'] + s['lost_free_runs']}",
+            ]
+        )
+    header = [
+        "FDI variant",
+        "detected",
+        "delay ms: median (p95)",
+        "isolation",
+        "|LOE err| pts",
+        "false-alarm runs (+ before onset)",
+        "lost",
+    ]
+    note = (
+        "60 faulty + 30 fault-free runs per variant (same seeds), each variant calibrated "
+        "with the same procedure; detected counts alarms after onset."
+    )
+    return header, rows, note
+
+
 # ======================================================================================
 def headline(paths: Paths) -> dict:
     e1 = load_json(paths.results / "e1_hover_loe.json")
@@ -240,6 +282,7 @@ def headline(paths: Paths) -> dict:
     e4 = load_json(paths.results / "e4_complete_loss.json")
     e5 = load_json(paths.results / "e5_loss_in_flight.json")
     e6 = load_json(paths.results / "e6_robustness.json")
+    e7 = load_json(paths.results / "e7_fdi_ablation.json")
 
     def e1row(m, b):
         return next(x for x in e1["rows"] if abs(x["magnitude"] - m) < 1e-9 and x["baseline"] == b)
@@ -300,6 +343,14 @@ def headline(paths: Paths) -> dict:
         e5_est_maxdev_cm=100 * e4row(e5, "estimated")["max_dev"]["median"],
         e5_est_settled_cm=100 * e4row(e5, "estimated")["settled_err"]["median"],
     )
+    for k in ("no_baseline", "no_adaptive", "single_cusum"):
+        v = e7["variants"][k]
+        h[f"e7_{k}_fa_runs"] = v["false_alarm_runs"]
+        h[f"e7_{k}_fa_pre"] = v["false_alarms_before_onset"]
+        h[f"e7_{k}_delay_ms"] = v["delay_ms"]["median"]
+        h[f"e7_{k}_isolation_pct"] = 100 * (v["isolation_accuracy"] or 0)
+    h["e7_n_free"] = e7["variants"]["full"]["n_free_runs"]
+    h["e7_n_fault"] = e7["variants"]["full"]["n_fault_runs"]
     # robustness limits: first swept value at which any run is lost
     lim = {}
     for k, pts in e6["sweeps"].items():
@@ -319,11 +370,10 @@ ABSTRACT = (
     "carry its share of the weight, switches to a yaw-relaxed controller in the spirit of "
     "Mueller and D'Andrea (2014) that spins the vehicle about a tilted primary axis "
     "(gain-scheduled LQR on the reduced attitude). In {e2_n_fault} Monte-Carlo runs with "
-    "20-90 % loss of effectiveness, all faults were detected (median delay "
-    "{e2_delay_median_ms:.0f} ms, 95th percentile {e2_delay_p95_ms:.0f} ms) and "
-    "{e2_isolation_pct:.1f} % were isolated to the correct rotor, with a median "
-    "magnitude error of {e2_loe_abs_err_median_pts:.1f} percentage points; "
-    "{e2_false_alarms} false alarms occurred in {e2_free_minutes:.0f} min of fault-free "
+    "20-90 % loss of effectiveness, {e2_detect_phrase} (median delay "
+    "{e2_delay_median_ms:.0f} ms, 95th percentile {e2_delay_p95_ms:.0f} ms), "
+    "{e2_iso_phrase}, with a median magnitude error of {e2_loe_abs_err_median_pts:.1f} "
+    "percentage points; {e2_fa_phrase} in {e2_free_minutes:.0f} min of fault-free "
     "flight. With a 50 % loss in hover the median peak deviation drops from "
     "{e1_passive_maxdev_50_cm:.0f} cm (passive) to {e1_est_maxdev_50_cm:.1f} cm. After a "
     "complete rotor loss in hover the passive controller lost the vehicle in "
@@ -331,17 +381,92 @@ ABSTRACT = (
     "pipeline recovered {e4_n_ok}/{e4_n} with a median peak deviation of "
     "{e4_est_maxdev_cm:.0f} cm and a spin of {e4_est_spin:.0f} rad/s; it also recovered "
     "{e5_n_ok}/{e5_n} complete losses during a 3.3 m/s figure-eight. These are simulation "
-    "results with assumed, not identified, parameters; the robustness sweeps show where "
-    "the yaw-relaxed controller stops working (actuator delay, slower motors, lower yaw "
-    "damping)."
+    "results with assumed, not identified, parameters; in the robustness sweeps "
+    "complete-loss recovery started to fail at {e6_limits}."
 )
+
+
+def _e6_limits(h: dict) -> str:
+    names = {
+        "actuator_delay_ms": "an actuator delay of {:g} ms (2 ms assumed)",
+        "motor_tau_ms": "a motor time constant of {:g} ms (25 ms assumed)",
+        "damping_scale": "{:g}x the rotational damping",
+        "inertia_scale": "{:g}x the inertia",
+        "turbulence_scale": "{:g}x the default turbulence",
+    }
+    parts = [names[k].format(v[0][0]) for k, v in h["e6_failures"].items() if v]
+    if not parts:
+        return "none of the tested values"
+    return ", ".join(parts[:-1]) + (" and " if len(parts) > 1 else "") + parts[-1]
 
 
 def abstract_text(h: dict) -> str:
     d = dict(h)
+    d["e6_limits"] = _e6_limits(h)
+    n, k = h["e2_n_fault"], h["e2_detected"]
+    d["e2_detect_phrase"] = (
+        "all faults were detected" if k == n else f"{k}/{n} faults were detected"
+    )
+    iso = h["e2_isolation_pct"]
+    d["e2_iso_phrase"] = (
+        "all were isolated to the correct rotor"
+        if iso >= 100.0 - 1e-9
+        else f"{iso:.1f} % were isolated to the correct rotor"
+    )
+    fa = h["e2_false_alarms"]
+    d["e2_fa_phrase"] = (
+        "no false alarm occurred"
+        if fa == 0
+        else f"{fa} false alarm{'s' if fa > 1 else ''} occurred"
+    )
     d["e4_n_ok"] = h["e4_n"] - h["e4_est_lost"]
     d["e5_n_ok"] = h["e5_n"] - h["e5_est_lost"]
     return ABSTRACT.format(**d)
+
+
+E6_NAMES = {
+    "actuator_delay_ms": ("actuator delay", "ms", 2),
+    "motor_tau_ms": ("motor time constant", "ms", 25),
+    "damping_scale": ("rotational damping", "x nominal", 1.0),
+    "inertia_scale": ("inertia", "x nominal", 1.0),
+    "turbulence_scale": ("turbulence", "x default", 1.0),
+}
+
+
+def e6_text(e6) -> str:
+    fails, ok = [], []
+    for k, (label, unit, nom) in E6_NAMES.items():
+        pts = e6["sweeps"][k]
+        bad = [p for p in pts if p["lost"] > 0]
+        vals = [p["value"] for p in pts]
+        rng = f"{min(vals):g}-{max(vals):g} {unit}"
+        if bad:
+            lost = ", ".join(
+                "{:g} {}: {}/{} lost".format(p["value"], unit, p["lost"], p["n"]) for p in bad
+            )
+            fails.append(f"{label} ({lost}; tested {rng}, nominal {nom:g})")
+        else:
+            ok.append(f"{label} ({rng})")
+    txt = "Generated from `results/e6_robustness.json`. "
+    if ok:
+        joined = ", ".join(ok[:-1]) + (" and " if len(ok) > 1 else "") + ok[-1]
+        txt += "Every run recovered over the whole tested range of " + joined + ". "
+    if fails:
+        txt += "Runs were lost for: " + "; ".join(fails) + "."
+    return txt
+
+
+def _inject_inline(path, key: str, content: str) -> None:
+    if not path.exists():
+        return
+    s = path.read_text()
+    s = re.sub(
+        rf"(<!-- BEGIN:{key} -->)(.*?)(<!-- END:{key} -->)",
+        lambda m: m.group(1) + content + m.group(3),
+        s,
+        flags=re.S,
+    )
+    path.write_text(s)
 
 
 def _inject(path, key: str, content: str) -> bool:
@@ -387,6 +512,7 @@ def write_reports(paths: Paths | None = None) -> dict:
     e4 = load_json(paths.results / "e4_complete_loss.json")
     e5 = load_json(paths.results / "e5_loss_in_flight.json")
     e6 = load_json(paths.results / "e6_robustness.json")
+    e7 = load_json(paths.results / "e7_fdi_ablation.json")
     tables = {
         "table_e1": (
             table_e1(e1),
@@ -395,9 +521,10 @@ def write_reports(paths: Paths | None = None) -> dict:
         ),
         "table_e2": (table_e2(e2), "E2: fault detection and isolation Monte Carlo.", "tab:e2"),
         "table_e2_noise": (table_e2_noise(e2), "E2: sensitivity to gyro noise.", "tab:e2noise"),
-        "table_e3": (table_e3(e3), "E3: figure-eight tracking with a 50\\,\\% loss.", "tab:e3"),
+        "table_e3": (table_e3(e3), "E3: figure-eight tracking with a 50 % loss.", "tab:e3"),
         "table_e4": (table_e4(e4, e5), "E4/E5: complete loss of one rotor.", "tab:e4"),
         "table_e6": (table_e6(e6), "E6: robustness of complete-loss recovery.", "tab:e6"),
+        "table_e7": (table_e7(e7), "E7: FDI ablation.", "tab:e7"),
     }
     gen = paths.paper / "generated"
     gen.mkdir(parents=True, exist_ok=True)
@@ -407,17 +534,22 @@ def write_reports(paths: Paths | None = None) -> dict:
         md_all.append(f"## {cap}\n\n{md}")
         for doc in (paths.root / "README.md", paths.paper / "report.md"):
             _inject(doc, key, md)
-        (gen / f"{key}.tex").write_text(
-            _tex_table(
-                header, rows, cap.replace("%", r"\%") + " " + note.replace("%", r"\%"), label
-            )
-            + "\n"
-        )
+        wide = key in ("table_e2_noise", "table_e4", "table_e7", "table_e1")
+        cap_tex = cap.replace("%", r"\%") + " " + note.replace("%", r"\%")
+        (gen / f"{key}.tex").write_text(_tex_table(header, rows, cap_tex, label, wide=wide) + "\n")
     h = headline(paths)
     ab = abstract_text(h)
     for doc in (paths.root / "README.md", paths.paper / "report.md"):
         _inject(doc, "abstract", ab)
     (gen / "abstract.tex").write_text(ab.replace("%", r"\%") + "\n")
+    et = e6_text(e6)
+    for doc in (paths.root / "README.md", paths.paper / "report.md"):
+        _inject(doc, "e6_text", et)
+    (gen / "e6_text.tex").write_text(et.replace("%", r"\%").replace("`", "") + "\n")
+    tf = paths.results / "timings.json"
+    if tf.exists():
+        minutes = load_json(tf)["total"] / 60.0
+        _inject_inline(paths.root / "README.md", "runtime", f"{max(1, round(minutes + 0.5))}")
     (gen / "numbers.tex").write_text(_tex_macros(h))
     (paths.results / "summary.md").write_text("\n".join(md_all))
     save_json(paths.results / "headline.json", h)

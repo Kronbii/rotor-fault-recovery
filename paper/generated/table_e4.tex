@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{E4/E5: complete loss of one rotor. Complete loss of one rotor (all four rotors in turn, several seeds each). Spin = mean |omega| over the last 2 s; switch delay = onset to yaw-relaxed control.}
+\label{tab:e4}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lccccccc}
+\toprule
+case & baseline & lost & time to loss (s) & max dev. (cm) & settled (cm) & spin (rad/s) & switch delay (ms) \\
+\midrule
+hover & Passive & 32/32 & 0.30 & -- & -- & -- & -- \\
+hover & Oracle & 0/32 & -- & 21.5 & 6.4 & 23.2 & 0 \\
+hover & Estimated (proposed) & 0/32 & -- & 37.9 & 7.6 & 23.2 & 62 \\
+figure-eight & Passive & 24/24 & 0.29 & -- & -- & -- & -- \\
+figure-eight & Oracle & 0/24 & -- & 25.4 & 16.7 & 23.6 & 0 \\
+figure-eight & Estimated (proposed) & 0/24 & -- & 39.2 & 18.3 & 23.6 & 62 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}

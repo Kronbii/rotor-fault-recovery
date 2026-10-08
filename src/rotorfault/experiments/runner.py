@@ -17,7 +17,11 @@ from .common import export_replay, save_run_npz
 
 
 def fdi_config(cal: dict) -> FDIConfig:
-    return FDIConfig(sigma=np.array(cal["sigma"]), thresholds=np.array(cal["thresholds"]))
+    return FDIConfig(
+        sigma=np.array(cal["sigma"]),
+        thresholds=np.array(cal["thresholds"]),
+        **cal.get("variant", {}),
+    )
 
 
 def run_task(task: dict) -> dict:

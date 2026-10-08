@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{E2: sensitivity to gyro noise. 1x = main experiment (200 + 100 runs); other levels 40 faulty + 20 fault-free runs with residual floor and thresholds re-calibrated for that level; the second false-alarm column re-flies the 20 fault-free runs with the thresholds calibrated at 1x.}
+\label{tab:e2noise}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lccccccc}
+\toprule
+gyro noise (deg/s) & detected & delay ms: median (p95) & isolation & |LOE err| pts & false alarms & false alarms, 1x thresholds & lost \\
+\midrule
+0.5x (0.9) & 40/40 & 18 (30) & 100.0 \% & 1.1 & 0 & 0/20 runs & 0 \\
+1x (1.7) & 200/200 & 30 (58) & 100.0 \% & 1.5 & 0 & -- & 0 \\
+2x (3.4) & 40/40 & 26 (34) & 100.0 \% & 1.3 & 0 & 0/20 runs & 0 \\
+4x (6.9) & 40/40 & 29 (53) & 100.0 \% & 1.7 & 0 & 0/20 runs & 0 \\
+8x (13.8) & 40/40 & 25 (48) & 100.0 \% & 2.0 & 0 & 0/20 runs & 0 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}

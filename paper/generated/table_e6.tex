@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{E6: robustness of complete-loss recovery. Complete loss in hover, estimated pipeline; the controller always assumes the nominal model.}
+\label{tab:e6}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabular}{lc}
+\toprule
+true-system change & runs lost per value \\
+\midrule
+actuator delay (ms) & 0: 0/8, 2: 0/8, 4: 0/8, 8: 0/8, 12: 0/8, 16: 0/8, 20: 0/8, 24: 5/8 \\
+motor time constant (ms) & 15: 0/8, 25: 0/8, 40: 0/8, 60: 0/8, 80: 8/8, 100: 8/8 \\
+rotational damping (x) & 0.25: 0/8, 0.5: 0/8, 1: 0/8, 1.5: 0/8, 2: 0/8 \\
+inertia (x) & 0.7: 0/8, 0.85: 0/8, 1: 0/8, 1.2: 0/8, 1.4: 0/8 \\
+turbulence (x) & 0: 0/8, 1: 0/8, 2: 0/8, 3: 5/8, 4: 6/8 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}

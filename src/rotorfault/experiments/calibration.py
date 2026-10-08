@@ -30,9 +30,14 @@ SAFETY = 2.0
 N_MIN = 10  # samples (20 ms) of evidence at the design magnitude, threshold floor
 
 
+def _cfg(sigma, thresholds, variant: dict | None) -> FDIConfig:
+    return FDIConfig(sigma=np.array(sigma), thresholds=np.array(thresholds), **(variant or {}))
+
+
 def _cal_run(args):
-    seed, traj, gyro_scale, sigma, duration = args
-    cfg = FDIConfig(sigma=np.array(sigma), thresholds=np.full(3, np.inf))
+    seed, traj, gyro_scale, sigma, duration, variant = args
+    n_bank = len(FDIConfig(**(variant or {})).deltas)
+    cfg = _cfg(sigma, np.full(n_bank, np.inf), variant)
     sc = make_scenario(traj, duration, magnitude=0.0, gyro_scale=gyro_scale)
     r = simulate(sc, "passive", seed, cfg)
     m = r.t >= 0.0
@@ -47,16 +52,24 @@ def calibrate(
     duration: float = 12.0,
     force: bool = False,
     quick: bool = False,
+    variant: dict | None = None,
+    tag: str = "",
 ) -> FDIConfig:
-    key = f"gyro_x{gyro_scale:g}" + ("_quick" if quick else "")
+    """Calibrate (or load the cached calibration of) the FDI for one gyro-noise level.
+
+    ``variant`` overrides FDIConfig fields (used by the ablation study); ``tag`` keeps
+    its calibration separate in ``results/calibration.json``.
+    """
+    key = f"gyro_x{gyro_scale:g}" + (f"_{tag}" if tag else "") + ("_quick" if quick else "")
     store = paths.results / "calibration.json"
     db = load_json(store) if store.exists() else {}
     if key in db and not force:
         e = db[key]
-        return FDIConfig(sigma=np.array(e["sigma"]), thresholds=np.array(e["thresholds"]))
+        return _cfg(e["sigma"], e["thresholds"], variant)
     if quick:
         n_runs, duration = 6, 6.0
-    sigma0 = FDIConfig().sigma
+    base = FDIConfig(**(variant or {}))
+    sigma0 = base.sigma
     tasks = [
         (
             SEED_CALIBRATION + int(1000 * gyro_scale) + i,
@@ -64,18 +77,19 @@ def calibrate(
             gyro_scale,
             sigma0.tolist(),
             duration,
+            variant,
         )
         for i in range(n_runs)
     ]
-    out = pmap(_cal_run, tasks, desc=f"calibration pass 1 (gyro x{gyro_scale:g})")
+    out = pmap(_cal_run, tasks, desc=f"calibration pass 1 ({key})")
     ms = np.mean([o["ms"] for o in out], axis=0)
     rms = np.sqrt(ms)
     rp = np.sqrt(0.5 * (ms[1] + ms[2]))
     sigma = np.array([rms[0], rp, rp, rms[3]])
-    tasks2 = [(s, tr, g, sigma.tolist(), d) for (s, tr, g, _, d) in tasks]
-    out2 = pmap(_cal_run, tasks2, desc=f"calibration pass 2 (gyro x{gyro_scale:g})")
+    tasks2 = [(s, tr, g, sigma.tolist(), d, v) for (s, tr, g, _, d, v) in tasks]
+    out2 = pmap(_cal_run, tasks2, desc=f"calibration pass 2 ({key})")
     gmax = np.array([o["gmax"] for o in out2])  # (runs, bank)
-    mu = np.asarray(FDIConfig().deltas) * hover_signature_norm(nominal_params(), sigma)
+    mu = np.asarray(base.deltas) * hover_signature_norm(nominal_params(), sigma)
     floor = N_MIN * mu**2 / 2
     thresholds = np.maximum(floor, SAFETY * gmax.max(axis=0))
     db[key] = {
@@ -85,11 +99,12 @@ def calibrate(
         "seeds": [t[0] for t in tasks],
         "sigma": sigma.tolist(),
         "residual_rms_per_row": rms.tolist(),
-        "deltas": list(FDIConfig().deltas),
+        "deltas": list(base.deltas),
+        "variant": variant or {},
         "h0_cusum_max_per_run": gmax.tolist(),
         "safety_factor": SAFETY,
         "threshold_floor": floor.tolist(),
         "thresholds": thresholds.tolist(),
     }
     save_json(store, db)
-    return FDIConfig(sigma=sigma, thresholds=thresholds)
+    return _cfg(sigma, thresholds, variant)
