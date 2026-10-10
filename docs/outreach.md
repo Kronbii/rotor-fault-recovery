@@ -20,16 +20,28 @@ and a 3.3 m/s figure-eight) where the nominal controller flipped within about 0.
 mapped where it breaks: about 24 ms of actuator delay, motors three times slower than
 modelled, or three times the default turbulence.
 
-Attach `paper/main.pdf` (5 pages, IEEE format). Key figure: `figures/fig_summary.png` (loss rate and peak deviation versus fault size, and a
-complete-loss recovery), with the detail in `figures/fig_e4_complete_loss.png`.
+To check that the diagnoser is not tied to my own simulator, I then replayed it, with the
+same settings, on 110 PX4 software-in-the-loop flights of PX4's x500 in Gazebo, with its
+parameters read from the simulator's model files and thresholds calibrated on separate
+fault-free flights. It detected and isolated all 40 injected partial losses (19-48 %,
+median delay 120 ms) and all 16 complete losses (median 132 ms), with no false alarm in
+22 minutes of fault-free flight; PX4's own failure detector flagged none of the partial
+losses and the complete losses only after about 0.66 s, once the vehicle had flipped.
 
-These are simulation results with assumed parameters; the next step I want to take is to
-test the diagnoser on real flight logs and in SITL, which is where I think your group's work
-on UAV fault diagnosis and fault-tolerant control would teach me the most.
+Attach `paper/main.pdf` (6 pages, IEEE format). Key figure: `figures/fig_summary.png` (loss
+rate and peak deviation versus fault size, and a complete-loss recovery); for the SITL part,
+`sitl/figures/fig_sitl_delay.png`.
+
+These are simulation results with assumed parameters (SITL included: Gazebo's sensors are
+much cleaner than a real IMU). The next step, for which the blackbox-log pipeline and the
+test protocol are ready, is a tethered test of my real 5-inch quad with the same estimator
+replayed on its logs, which is where I think your group's work on UAV fault diagnosis and
+fault-tolerant control would teach me the most.
 
 ---
 
 Notes for adapting the last sentence: name the specific paper or method of the professor
 (for example INDI-based FTC, observer-based FDI, or learning-based diagnosis) and say what
 in this project it would change or test. Do not describe the work as published or
-peer-reviewed; it is a simulation study with code and data.
+peer-reviewed; it is a simulation study with code and data, and the PX4 part is SITL,
+not a flight. Do not describe the tethered test as done.
