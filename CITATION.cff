@@ -4,7 +4,9 @@ title: "Detect, isolate, recover: rotor-fault tolerance for a 5-inch quadrotor (
 abstract: >-
   Simulation study and open-source code for rotor loss-of-effectiveness detection,
   isolation and fault-tolerant control of a 5-inch FPV-class quadrotor, including a
-  yaw-relaxed controller for the complete loss of one rotor.
+  yaw-relaxed controller for the complete loss of one rotor, an offline replay of the
+  diagnoser on PX4 software-in-the-loop logs, and a log pipeline for Betaflight blackbox
+  logs of the real vehicle.
 authors:
   - family-names: Kronbi
     given-names: Rami
@@ -19,3 +21,4 @@ keywords:
   - fault-tolerant control
   - rotor failure
   - UAV
+  - PX4
