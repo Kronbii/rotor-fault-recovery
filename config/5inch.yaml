@@ -1,0 +1,39 @@
+# The real 5-inch quadrotor (Betaflight), for `rotorfault replay` / `identify`.
+#
+# STATUS: every number below is the ASSUMED value of the simulation study
+# (src/rotorfault/params.py), not a measurement. Replace them with the output of
+# `rotorfault identify` on the first fault-free logs (docs/tethered-test.md, step 3),
+# and check the log conventions with the bench tests of that document before trusting
+# any replay. Body frame FLU (x forward, y left, z up); rotor i = Betaflight motor i+1.
+name: 5inch-betaflight
+source: assumed values of rotorfault.params.nominal_params (mass budget, typical 2306 /
+  5-inch tri-blade data); Betaflight quad-X motor order; props-in (Betaflight default,
+  yaw_motors_reversed = OFF). Not identified yet.
+vehicle:
+  mass: 0.638                 # kg, weigh the flight-ready quad with battery and camera
+  inertia: [1.36e-3, 2.12e-3, 3.13e-3]   # kg m^2, identify (rotorfault identify)
+  gravity: 9.81
+  rotors:                     # Betaflight motor 1..4; spin +1 = clockwise seen from above
+  - {x: -0.0778, y: -0.0778, spin: 1}    # motor 1 rear-right, CW (props in)
+  - {x: 0.0778, y: -0.0778, spin: -1}    # motor 2 front-right, CCW
+  - {x: -0.0778, y: 0.0778, spin: -1}    # motor 3 rear-left, CCW
+  - {x: 0.0778, y: 0.0778, spin: 1}      # motor 4 front-left, CW
+  kappa: 0.015                # m, yaw torque per unit thrust
+  rotor_inertia: 6.0e-6       # kg m^2, prop + bell
+  drag_lin: [0.16, 0.16, 0.20]
+  drag_quad: 0.006
+  rot_damping: [2.5e-3, 2.5e-3, 2.0e-3]
+motor:
+  k_f: 8.96e-7                # N s^2; identify from hover (+ eRPM)
+  speed_at_zero: 250.0        # rad/s at normalised command 0 (DShot 48)
+  speed_at_full: 2500.0       # rad/s at command 1 (DShot 2047); identify with eRPM
+  tau_up: 0.025               # s; identify from throttle steps
+  tau_down: 0.025
+  delay_s: 0.002              # s; command -> ESC
+log:
+  format: betaflight-blackbox-csv   # blackbox_decode --unit-rotation rad/s --unit-acceleration m/s2 --unit-frame-time s
+  motor_range: [48, 2047]     # DShot values mapped to command 0..1 (see the BBL header motorOutput)
+  erpm_units: 100             # eRPM[i] column x 100 = electrical RPM (verify)
+  motor_poles: 14             # 12N14P stator: 7 pole pairs
+  gyro_axes: ["+x", "+y", "+z"]   # blackbox axis -> body FLU axis (verify by hand rotation)
+  acc_axes: ["+x", "+y", "+z"]

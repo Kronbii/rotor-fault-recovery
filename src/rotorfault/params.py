@@ -122,6 +122,11 @@ class QuadParams:
     rot_damping: np.ndarray  # body-frame rotational damping diag (N m s/rad)
     k_f_scale: np.ndarray = field(default_factory=lambda: np.ones(4))  # per-rotor k_f spread
     g: float = G
+    # Optional airframe geometry (used for other vehicles, e.g. the PX4 x500 or a
+    # Betaflight motor order). None = the standard layout described in the module
+    # docstring: rotor azimuths -45, 45, 135, 225 deg at ``arm_length``, s = (+1,-1,+1,-1).
+    rotor_xy: np.ndarray | None = None  # (4, 2) rotor positions in body x/y (FLU), m
+    spin: np.ndarray | None = None  # (4,) yaw-torque sign s_i of each rotor
 
     # ---------------- derived quantities ----------------
     @property
@@ -152,11 +157,16 @@ class QuadParams:
 
     @property
     def spin_dir(self) -> np.ndarray:
+        if self.spin is not None:
+            return np.asarray(self.spin, dtype=float)
         return np.array([1.0, -1.0, 1.0, -1.0])
 
     @property
     def rotor_positions(self) -> np.ndarray:
         """4x3 array of rotor positions in the body frame."""
+        if self.rotor_xy is not None:
+            xy = np.asarray(self.rotor_xy, dtype=float)
+            return np.column_stack([xy, np.zeros(len(xy))])
         th = np.deg2rad([-45.0, 45.0, 135.0, 225.0])
         l = self.arm_length
         return np.stack([l * np.cos(th), l * np.sin(th), np.zeros(4)], axis=1)
@@ -179,6 +189,10 @@ class QuadParams:
         p.drag_lin = np.array(p.drag_lin, dtype=float).copy()
         p.rot_damping = np.array(p.rot_damping, dtype=float).copy()
         p.k_f_scale = np.array(p.k_f_scale, dtype=float).copy()
+        if p.rotor_xy is not None:
+            p.rotor_xy = np.array(p.rotor_xy, dtype=float).copy()
+        if p.spin is not None:
+            p.spin = np.array(p.spin, dtype=float).copy()
         return p
 
 
