@@ -102,3 +102,6 @@ size, and a complete-loss recovery against the passive controller's flip). Secon
 for the SITL part: `sitl/figures/fig_sitl_delay.png`, or panel (b) of
 `sitl/figures/fig_sitl_timeline.png` (diagnoser alarm before the flip, PX4's detector
 after it).
+
+The portfolio page uses plates redrawn from the same results at its frame sizes (a square hero
+and 4:3 gallery images): `python experiments/portfolio_plates.py <outdir>`.
