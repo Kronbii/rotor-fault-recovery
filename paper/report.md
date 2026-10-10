@@ -8,7 +8,7 @@ markers are generated from `results/*.json` by `make report`.*
 ## Abstract
 
 <!-- BEGIN:abstract -->
-We study rotor-fault tolerance for a simulated 5-inch FPV-class quadrotor (0.64 kg, thrust-to-weight 3.6) with sensor noise, a 10 ms motion-capture latency, parameter uncertainty and light turbulence. An online estimator of the four rotor effectiveness factors (filtered rigid-body regression, Kalman filter) feeds a bank of CUSUM tests for detection and isolation; a supervisor then either re-allocates thrust with the estimated effectiveness (partial loss) or, when a rotor can no longer carry its share of the weight, switches to a yaw-relaxed controller in the spirit of Mueller and D'Andrea (2014) that spins the vehicle about a tilted primary axis (gain-scheduled LQR on the reduced attitude). In 200 Monte-Carlo runs with 20-90 % loss of effectiveness, all faults were detected (median delay 30 ms, 95th percentile 58 ms) and all were isolated to the correct rotor, with a median magnitude error of 1.5 percentage points; no false alarm occurred in 32 min of fault-free flight. With a 50 % loss in hover the median peak deviation drops from 28 cm (passive) to 4.3 cm. After a complete rotor loss in hover the passive controller lost the vehicle in 32/32 runs (median 0.30 s), while the proposed pipeline recovered 32/32 with a median peak deviation of 38 cm and a spin of 23 rad/s; it also recovered 24/24 complete losses during a 3.3 m/s figure-eight. These are simulation results with assumed, not identified, parameters; in the robustness sweeps complete-loss recovery started to fail at an actuator delay of 24 ms (2 ms assumed), a motor time constant of 80 ms (25 ms assumed) and 3x the default turbulence.
+We study rotor-fault tolerance for a simulated 5-inch FPV-class quadrotor (0.64 kg, thrust-to-weight 3.6) with sensor noise, a 10 ms motion-capture latency, parameter uncertainty and light turbulence. An online estimator of the four rotor effectiveness factors (filtered rigid-body regression, Kalman filter) feeds a bank of CUSUM tests for detection and isolation; a supervisor then either re-allocates thrust with the estimated effectiveness (partial loss) or, when a rotor can no longer carry its share of the weight, switches to a yaw-relaxed controller in the spirit of Mueller and D'Andrea (2014) that spins the vehicle about a tilted primary axis (gain-scheduled LQR on the reduced attitude). In 200 Monte-Carlo runs with 20-90 % loss of effectiveness, all faults were detected (median delay 30 ms, 95th percentile 58 ms) and all were isolated to the correct rotor, with a median magnitude error of 1.5 percentage points; no false alarm occurred in 32 min of fault-free flight. With a 50 % loss in hover the median peak deviation drops from 28 cm (passive) to 4.3 cm. After a complete rotor loss in hover the passive controller lost the vehicle in 32/32 runs (median 0.30 s), while the proposed pipeline recovered 32/32 with a median peak deviation of 38 cm and a spin of 23 rad/s; it also recovered 24/24 complete losses during a 3.3 m/s figure-eight. These are simulation results with assumed, not identified, parameters; in the robustness sweeps complete-loss recovery started to fail at an actuator delay of 24 ms (2 ms assumed), a motor time constant of 80 ms (25 ms assumed) and 3x the default turbulence. In 110 PX4 software-in-the-loop flights of a Gazebo x500, replayed offline with parameters read from the simulator's model files, the same diagnoser detected and isolated all 40 injected partial losses (19-48 %, median delay 120 ms) and all 16 complete losses (median 132 ms), with no false alarm in 22 min of fault-free flight; PX4's own failure detector flagged none of the partial losses and the complete losses only after 664 ms, once the vehicle had flipped.
 <!-- END:abstract -->
 
 ## 1. Introduction
@@ -304,12 +304,67 @@ than assumed, but fails at 24 ms actuator delay, 80 ms motor time constant and 3
 default turbulence. All three act during the spin-up transient, where the relaxed
 equilibrium leaves little control margin.
 
-## 8. Discussion and limitations
+## 8. PX4 SITL validation
+
+To check that the diagnoser is not tied to the simulator it was developed on, it was
+replayed offline on ULogs of PX4 [13] software-in-the-loop flights: PX4-Autopilot
+(v1.18.0-beta1, unmodified) with its x500 quadrotor in Gazebo Harmonic [14], run headless
+and commanded over MAVLink to take off, hover or fly a 5 m / 3 m/s orbit, in calm air or
+PX4's windy world (steady 5.4 m/s), with a fault injected 8-14 s into the manoeuvre. The
+x500 weighs 2.1 kg and has a thrust-to-weight ratio of 1.7. Its airframe description
+(mass, inertia, rotor layout, spin directions, motor constants and asymmetric time
+constants) is generated from PX4's model files; only the command-to-thrust delay is
+fitted, and the residual floor and thresholds come from fault-free calibration flights
+with disjoint seeds, by the procedure of Section 4. All filter, Kalman-filter and CUSUM
+settings are unchanged.
+
+PX4's own `failure motor off` injection (the only motor failure type at this version)
+had no effect with the default `CA_FAILURE_MODE = 0`, and with mode 1 it logs the stopped
+motor's command as NaN, which reveals the fault to a log-based diagnoser. The evaluated
+faults were therefore injected in the simulated ESC: the limits of the bridge's
+command-to-speed map are scaled at runtime, so that one motor delivers a fraction of the
+commanded speed while PX4 keeps logging the intended command.
+
+<!-- BEGIN:table_sitl -->
+| fault | condition | runs | detected | isolated | delay ms: median (p95) | no adaptive scale: delay (p95), isolated | abs. loss error, pts | PX4 failure detector | PX4 after the fault |
+|---|---|---|---|---|---|---|---|---|---|
+| partial | hover, calm | 10 | 10/10 | 10/10 | 120 (126) | 40 (50), 10/10 | 0.1 | none | held 4, descended 6 |
+| partial | orbit, calm | 10 | 10/10 | 10/10 | 120 (128) | 42 (56), 10/10 | 0.9 | none | held 8, descended 2 |
+| partial | hover, wind | 10 | 10/10 | 10/10 | 124 (124) | 38 (48), 10/10 | 0.4 | none | held 6, descended 4 |
+| partial | orbit, wind | 10 | 10/10 | 10/10 | 122 (137) | 36 (55), 8/10 | 2.3 | none | held 3, descended 6, flipped 1 |
+| partial | all | 40 | 40/40 | 40/40 | 120 (128) | 40 (56), 38/40 | 0.5 | none | held 21, descended 18, flipped 1 |
+| complete | all four | 16 | 16/16 | 16/16 | 132 (141) | 20 (24), 14/16 | 0.0 | fd_roll 16/16, 664 ms | flipped 16 |
+
+*PX4 v1.18.0-beta1-322-g18098d3bbe SITL, x500 in Gazebo Harmonic; the diagnoser is replayed offline on the ULogs. Partial: thrust loss of 19-48 % on a random motor, onset 8-14 s into the manoeuvre; complete: each motor in each condition (the loss estimate is clipped at 100 %). False alarms: 0 (as designed) and 0 (no adaptive scale) in 22 min of fault-free flight (24 held-out flights plus the time before each onset); calibration on 24 other fault-free flights. PX4 after the fault, within 8 s (6 s for complete losses): held altitude (less than 1 m lost), descended (more than 1 m lost, tilt below 90 deg) or flipped.*
+<!-- END:table_sitl -->
+
+<!-- BEGIN:sitl_text -->
+Generated from `sitl/results/sitl_summary.json`. In 110 PX4 SITL flights (24 of them for calibration), the diagnoser detected 40/40 partial losses of 19-48 % (median delay 120 ms, 95th percentile 128 ms), isolated 40/40 to the right motor and estimated the loss with a median error of 0.5 points; it detected 16/16 complete losses after a median 132 ms, all before the vehicle tilted past 90 deg (median 486 ms). No false alarm occurred in 22 min of fault-free flight. PX4's failure detector raised no flag for the partial losses, and for the complete losses its attitude-limit check fired 16/16 times after a median 664 ms, in 16 of them after the tilt had passed 90 deg. Without the adaptive residual scale the median delays drop to 40 ms (partial) and 20 ms (complete), but 4 of 56 faults are then isolated to the wrong motor. After a partial loss PX4 held altitude in 15/16 runs below 35 % loss and in 6/24 runs above. PX4's own `failure motor off` injection changed nothing in 2/2 flights with the default CA_FAILURE_MODE = 0; with CA_FAILURE_MODE = 1 it stopped the motor and the vehicle flipped in 4/4 (attitude check after a median 660 ms).
+<!-- END:sitl_text -->
+
+![SITL](../sitl/figures/fig_sitl_delay.png)
+
+*Fig. 6 — PX4 SITL: (a) detection delay of the partial losses versus the true thrust
+loss, as designed (filled) and without the adaptive residual scale (open); (b) complete
+losses: diagnoser alarm, the instant the tilt passes 90 deg, and PX4's failure detector.*
+
+The comparison with PX4 is not one between two diagnosers: PX4's checks are last-resort
+triggers (attitude beyond 60 deg for 0.3 s; altitude loss, off by default; ESC current
+against throttle, which cannot fire in SITL because Gazebo's ESC model reports no
+current). The adaptive residual scale, for which the 5-inch ablation showed no benefit,
+trades about 0.1 s of delay for correct isolation here: the isolation errors without it
+all named the diagonal partner with the same spin direction, within the first tens of
+milliseconds. The false-alarm result is weak evidence: Gazebo's IMU is almost noise-free
+and does not vibrate, the calibration statistics never left zero and the thresholds were
+set by the 20 ms evidence floor. No fault-tolerant control was run in PX4.
+
+## 9. Discussion and limitations
 
 The results support the pipeline *in simulation*: diagnosis is fast enough that the
 partial-loss transient stays at the turbulence floor, and fast enough to hand a complete
 loss to the yaw-relaxed controller within about 60 ms. They do not show that it works on
-a real 5-inch quadrotor.
+a real 5-inch quadrotor; the PX4 SITL replay shows that the diagnoser carries over to
+another flight stack and vehicle model, which is still simulation.
 
 * All parameters are assumed. The rotational damping that sets the spin rate is the least
   certain, and the aerodynamics of a body spinning at more than 20 rad/s is not modelled.
@@ -324,16 +379,18 @@ a real 5-inch quadrotor.
   statistic.
 * The oracle is an upper bound on information, not on the switching policy.
 
-## 9. Conclusion and next steps
+## 10. Conclusion and next steps
 
 A model-based diagnoser (filtered rigid-body regression, Kalman filter, CUSUM bank)
 combined with re-allocation for partial losses and a gain-scheduled yaw-relaxed controller
 for complete losses recovered every simulated rotor fault in the main experiments,
 including complete losses during 3.3 m/s flight; in the robustness sweeps it failed at
-large actuator delay, very slow motors and strong turbulence. Next: PX4 SITL; offline evaluation on Betaflight blackbox logs of a real
-5-inch quadrotor (with identification of its parameters and use of RPM telemetry);
-protected flight tests with a weakened and then a cut propeller; and a comparison with
-INDI-based FTC [5, 6].
+large actuator delay, very slow motors and strong turbulence. Replayed on PX4 SITL logs
+of a different vehicle, it detected every injected fault (Section 8). Next: tethered tests
+on the real 5-inch quadrotor with the same estimator replayed on Betaflight blackbox logs
+(fault-free flights for the residual floor and the parameters, then a weakened propeller
+and a throttled ESC; pipeline and protocol in the repository), the diagnoser running
+inside PX4, and a comparison with INDI-based FTC [5, 6].
 
 ## References
 
@@ -364,3 +421,8 @@ INDI-based FTC [5, 6].
 12. R. C. Avram, X. Zhang, J. Muse, "Quadrotor actuator fault diagnosis and accommodation
     using nonlinear adaptive estimators," IEEE Trans. Control Systems Technology, 25(6),
     pp. 2219-2226, 2017.
+13. L. Meier, D. Honegger, M. Pollefeys, "PX4: A node-based multithreaded open source
+    robotics framework for deeply embedded platforms," Proc. IEEE ICRA, pp. 6235-6240,
+    2015.
+14. N. Koenig, A. Howard, "Design and use paradigms for Gazebo, an open-source multi-robot
+    simulator," Proc. IEEE/RSJ IROS, pp. 2149-2154, 2004.

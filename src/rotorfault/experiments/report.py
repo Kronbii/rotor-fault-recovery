@@ -458,6 +458,242 @@ def e6_text(e6) -> str:
     return txt
 
 
+# ======================================================================================
+# PX4 SITL validation (sitl/analyze.py writes sitl/results/sitl_summary.json)
+COND_LABEL = {
+    "hover-calm": "hover, calm",
+    "orbit-calm": "orbit, calm",
+    "hover-wind": "hover, wind",
+    "orbit-wind": "orbit, wind",
+}
+
+
+def _px4_outcome(b) -> str:
+    parts = [
+        f"{name} {b[k]}"
+        for k, name in (
+            ("px4_held", "held"),
+            ("px4_descended", "descended"),
+            ("px4_flipped", "flipped"),
+        )
+        if b[k]
+    ]
+    return ", ".join(parts)
+
+
+def table_sitl(s):
+    P, N = s["variants"]["proposed"], s["variants"]["no_adaptive"]
+
+    def row(label, cond, b, nb):
+        d, dn = b["delay_ms"], nb["delay_ms"]
+        px4 = "none"
+        if b["px4_detected"]:
+            px4 = (
+                f"{'/'.join(b['px4_flags'])} {b['px4_detected']}/{b['n']}, "
+                f"{_f(b['px4_delay_ms']['median'], 0)} ms"
+            )
+        return [
+            label,
+            cond,
+            f"{b['n']}",
+            f"{b['detected']}/{b['n']}",
+            f"{b['isolation_correct']}/{b['n']}",
+            f"{_f(d['median'], 0)} ({_f(d['p95'], 0)})",
+            f"{_f(dn['median'], 0)} ({_f(dn['p95'], 0)}), {nb['isolation_correct']}/{nb['n']}",
+            _f(b["loe_abs_err"]["median"], 1, 100),
+            px4,
+            _px4_outcome(b),
+        ]
+
+    lo, hi = P["partial"]["loe_range"]
+    rows = []
+    for c in COND_LABEL:
+        if c in P["partial"]["by_condition"]:
+            rows.append(
+                row(
+                    "partial",
+                    COND_LABEL[c],
+                    P["partial"]["by_condition"][c],
+                    N["partial"]["by_condition"][c],
+                )
+            )
+    rows.append(row("partial", "all", P["partial"], N["partial"]))
+    rows.append(row("complete", "all four", P["complete"], N["complete"]))
+    header = [
+        "fault",
+        "condition",
+        "runs",
+        "detected",
+        "isolated",
+        "delay ms: median (p95)",
+        "no adaptive scale: delay (p95), isolated",
+        "abs. loss error, pts",
+        "PX4 failure detector",
+        "PX4 after the fault",
+    ]
+    ff = P["fault_free"]
+    fa_n = ff["false_alarm_runs"] + ff["false_alarms_pre_onset"]
+    ffn = N["fault_free"]
+    fa_nn = ffn["false_alarm_runs"] + ffn["false_alarms_pre_onset"]
+    ver = s.get("px4_describe") or s["px4_version"][:10]
+    note = (
+        f"PX4 {ver} SITL, x500 in Gazebo Harmonic; the diagnoser is replayed offline on the "
+        f"ULogs. Partial: thrust loss of {100 * lo:.0f}-{100 * hi:.0f} % on a random motor, "
+        "onset 8-14 s into the manoeuvre; complete: each motor in each condition (the loss "
+        f"estimate is clipped at 100 %). False alarms: {fa_n} (as designed) and {fa_nn} (no "
+        "adaptive "
+        f"scale) in {ff['minutes'] + ff['pre_onset_minutes']:.0f} min of fault-free flight "
+        f"({ff['n_runs']} held-out flights plus the time before each onset); calibration on "
+        f"{s['n_calibration']} other fault-free flights. PX4 after the fault, within 8 s "
+        "(6 s for complete losses): held altitude (less than 1 m lost), descended (more than "
+        "1 m lost, tilt below 90 deg) or flipped."
+    )
+    return header, rows, note
+
+
+def sitl_headline(s) -> dict:
+    P, N = s["variants"]["proposed"], s["variants"]["no_adaptive"]
+    pa, co, ff = P["partial"], P["complete"], P["fault_free"]
+    bins = pa["by_loe"]
+    h = dict(
+        sitl_n_total=s["n_runs_total"],
+        sitl_n_cal=s["n_calibration"],
+        sitl_n_free=ff["n_runs"],
+        sitl_free_min=ff["minutes"] + ff["pre_onset_minutes"],
+        sitl_fa=ff["false_alarm_runs"] + ff["false_alarms_pre_onset"],
+        sitl_fa_noad=N["fault_free"]["false_alarm_runs"]
+        + N["fault_free"]["false_alarms_pre_onset"],
+        sitl_part_n=pa["n"],
+        sitl_part_det=pa["detected"],
+        sitl_part_iso=pa["isolation_correct"],
+        sitl_part_loe_lo=100 * pa["loe_range"][0],
+        sitl_part_loe_hi=100 * pa["loe_range"][1],
+        sitl_part_delay_med=pa["delay_ms"]["median"],
+        sitl_part_delay_p95=pa["delay_ms"]["p95"],
+        sitl_part_loe_err=100 * pa["loe_abs_err"]["median"],
+        sitl_part_loe_err_p95=100 * pa["loe_abs_err"]["p95"],
+        sitl_part_delay_noad=N["partial"]["delay_ms"]["median"],
+        sitl_part_iso_noad=N["partial"]["isolation_correct"],
+        sitl_part_px4=pa["px4_detected"],
+        sitl_part_held=pa["px4_held"],
+        sitl_part_descended=pa["px4_descended"],
+        sitl_part_flipped=pa["px4_flipped"],
+        sitl_part_held_low=bins[0]["px4_held"] + bins[1]["px4_held"],
+        sitl_part_n_low=bins[0]["n"] + bins[1]["n"],
+        sitl_part_held_high=bins[2]["px4_held"],
+        sitl_part_n_high=bins[2]["n"],
+        sitl_bin_edge=100 * bins[2]["lo"],
+        sitl_comp_n=co["n"],
+        sitl_comp_det=co["detected"],
+        sitl_comp_iso=co["isolation_correct"],
+        sitl_comp_delay_med=co["delay_ms"]["median"],
+        sitl_comp_delay_p95=co["delay_ms"]["p95"],
+        sitl_comp_delay_noad=N["complete"]["delay_ms"]["median"],
+        sitl_comp_iso_noad=N["complete"]["isolation_correct"],
+        sitl_comp_px4=co["px4_detected"],
+        sitl_comp_px4_ms=co["px4_delay_ms"]["median"],
+        sitl_comp_flip_ms=1000 * co["time_to_loss_s"]["median"],
+        sitl_comp_flipped=co["px4_flipped"],
+        sitl_comp_before=co["alarm_before_loss"],
+        sitl_comp_px4_after=co.get("px4_after_loss", 0),
+        sitl_delay_ms=1000 * s["delay_steps"] / s["rate_hz"],
+    )
+    if "px4_off" in P:
+        h.update(
+            sitl_pxoff_n=P["px4_off"]["n"],
+            sitl_pxoff_flipped=P["px4_off"]["px4_flipped"],
+            sitl_pxoff_px4_ms=P["px4_off"]["px4_delay_ms"]["median"],
+        )
+    if "px4_off_default" in P:
+        d = P["px4_off_default"]
+        h.update(sitl_pxdef_n=d["n"], sitl_pxdef_effective=d["injection_effective"])
+    return h
+
+
+SITL_TEXT = (
+    "Generated from `sitl/results/sitl_summary.json`. In {sitl_n_total} PX4 SITL flights "
+    "({sitl_n_cal} of them for calibration), the diagnoser detected {sitl_part_det}/"
+    "{sitl_part_n} partial losses of {sitl_part_loe_lo:.0f}-{sitl_part_loe_hi:.0f} % "
+    "(median delay {sitl_part_delay_med:.0f} ms, 95th percentile {sitl_part_delay_p95:.0f} "
+    "ms), isolated {sitl_part_iso}/{sitl_part_n} to the right motor and estimated the loss "
+    "with a median error of {sitl_part_loe_err:.1f} points; it detected {sitl_comp_det}/"
+    "{sitl_comp_n} complete losses after a median {sitl_comp_delay_med:.0f} ms, "
+    "{sitl_comp_before_phrase} the vehicle tilted past 90 deg (median {sitl_comp_flip_ms:.0f} "
+    "ms). {sitl_fa_phrase} "
+    "in {sitl_free_min:.0f} min of fault-free flight. PX4's failure detector raised "
+    "{sitl_part_px4_phrase} for the partial losses, and for the complete losses its "
+    "attitude-limit check fired {sitl_comp_px4}/{sitl_comp_n} times after a median "
+    "{sitl_comp_px4_ms:.0f} ms, in {sitl_comp_px4_after} of them after the tilt had passed "
+    "90 deg. Without the adaptive residual scale the median delays drop "
+    "to {sitl_part_delay_noad:.0f} ms (partial) and {sitl_comp_delay_noad:.0f} ms "
+    "(complete), but {sitl_iso_err_noad} of {sitl_n_faulty} faults are then isolated to the "
+    "wrong motor. After a partial loss PX4 held altitude in {sitl_part_held_low}/"
+    "{sitl_part_n_low} runs below {sitl_bin_edge:.0f} % loss and in {sitl_part_held_high}/"
+    "{sitl_part_n_high} runs above.{sitl_pxoff_phrase}"
+)
+
+
+def sitl_text(h) -> str:
+    d = dict(h)
+    fa = h["sitl_fa"]
+    d["sitl_fa_phrase"] = "No false alarm occurred" if fa == 0 else f"{fa} false alarms occurred"
+    d["sitl_part_px4_phrase"] = (
+        "no flag" if h["sitl_part_px4"] == 0 else f"a flag in {h['sitl_part_px4']} runs"
+    )
+    d["sitl_n_faulty"] = h["sitl_part_n"] + h["sitl_comp_n"]
+    nb, nc = h["sitl_comp_before"], h["sitl_comp_flipped"]
+    d["sitl_comp_before_phrase"] = "all before" if nb == nc else f"{nb} of {nc} before"
+    d["sitl_iso_err_noad"] = d["sitl_n_faulty"] - h["sitl_part_iso_noad"] - h["sitl_comp_iso_noad"]
+    d["sitl_pxoff_phrase"] = ""
+    if "sitl_pxdef_n" in h and "sitl_pxoff_n" in h:
+        n0, eff = h["sitl_pxdef_n"], h["sitl_pxdef_effective"]
+        d["sitl_pxoff_phrase"] = (
+            f" PX4's own `failure motor off` injection changed nothing in {n0 - eff}/{n0} "
+            "flights with the default CA_FAILURE_MODE = 0; with CA_FAILURE_MODE = 1 it stopped "
+            f"the motor and the vehicle flipped in {h['sitl_pxoff_flipped']}/{h['sitl_pxoff_n']} "
+            f"(attitude check after a median {h['sitl_pxoff_px4_ms']:.0f} ms)."
+        )
+    return SITL_TEXT.format(**d)
+
+
+ABSTRACT_SITL = (
+    " In {sitl_n_total} PX4 software-in-the-loop flights of a Gazebo x500, replayed offline "
+    "with parameters read from the simulator's model files, the same diagnoser detected and "
+    "isolated {sitl_part_iso_word} {sitl_part_n} injected partial losses "
+    "({sitl_part_loe_lo:.0f}-{sitl_part_loe_hi:.0f} %, median delay {sitl_part_delay_med:.0f} "
+    "ms) and {sitl_comp_iso_word} {sitl_comp_n} complete losses (median "
+    "{sitl_comp_delay_med:.0f} ms), with {sitl_fa_word} in {sitl_free_min:.0f} min of "
+    "fault-free flight; PX4's own failure detector flagged {sitl_part_px4_word} of the "
+    "partial losses and the complete losses only after {sitl_comp_px4_ms:.0f} ms{sitl_flip_phrase}."
+)
+
+
+def abstract_sitl(h) -> str:
+    d = dict(h)
+
+    def word(k, n):
+        return "all" if k == n else f"{k} of"
+
+    d["sitl_part_iso_word"] = word(h["sitl_part_iso"], h["sitl_part_n"])
+    d["sitl_comp_iso_word"] = word(h["sitl_comp_iso"], h["sitl_comp_n"])
+    d["sitl_fa_word"] = "no false alarm" if h["sitl_fa"] == 0 else f"{h['sitl_fa']} false alarms"
+    d["sitl_part_px4_word"] = "none" if h["sitl_part_px4"] == 0 else str(h["sitl_part_px4"])
+    n_after, n = h["sitl_comp_px4_after"], h["sitl_comp_px4"]
+    d["sitl_flip_phrase"] = (
+        ", once the vehicle had flipped"
+        if n and n_after == n
+        else f" (after the vehicle had flipped in {n_after} of {n})"
+        if n_after
+        else ""
+    )
+    return ABSTRACT_SITL.format(**d)
+
+
+def load_sitl(paths: Paths):
+    f = paths.root / "sitl" / "results" / "sitl_summary.json"
+    return load_json(f) if f.exists() else None
+
+
 def _inject_inline(path, key: str, content: str) -> None:
     if not path.exists():
         return
@@ -540,6 +776,25 @@ def write_reports(paths: Paths | None = None) -> dict:
         cap_tex = cap.replace("%", r"\%") + " " + note.replace("%", r"\%")
         cap_tex = cap_tex.replace("|omega|", r"$|\omega|$")
         (gen / f"{key}.tex").write_text(_tex_table(header, rows, cap_tex, label, wide=wide) + "\n")
+    sitl = load_sitl(paths)
+    sh = {}
+    if sitl is not None:
+        header, rows, note = table_sitl(sitl)
+        md = _md_table(header, rows) + f"\n\n*{note}*\n"
+        md_all.append(f"## PX4 SITL validation.\n\n{md}")
+        for doc in (paths.root / "README.md", paths.paper / "report.md"):
+            _inject(doc, "table_sitl", md)
+        cap_tex = ("PX4 SITL validation. " + note).replace("%", r"\%")
+        (gen / "table_sitl.tex").write_text(
+            _tex_table(header, rows, cap_tex, "tab:sitl", wide=True) + "\n"
+        )
+        sh = sitl_headline(sitl)
+        st = sitl_text(sh)
+        for doc in (paths.root / "README.md", paths.paper / "report.md"):
+            _inject(doc, "sitl_text", st)
+        st_tex = st.split(". ", 1)[1] if st.startswith("Generated from") else st
+        st_tex = st_tex.replace("%", r"\%").replace("`", "").replace("_", r"\_")
+        (gen / "sitl_text.tex").write_text(st_tex + "\n")
     et = e6_text(e6)
     for doc in (paths.root / "README.md", paths.paper / "report.md"):
         _inject(doc, "e6_text", et)
@@ -552,7 +807,8 @@ def write_reports(paths: Paths | None = None) -> dict:
         # the quick smoke version lacks some of the points quoted in the abstract
         print("  headline numbers need the full study (not --quick); abstract not updated")
         return {}
-    ab = abstract_text(h)
+    h.update(sh)
+    ab = abstract_text(h) + (abstract_sitl(h) if sh else "")
     for doc in (paths.root / "README.md", paths.paper / "report.md"):
         _inject(doc, "abstract", ab)
     (gen / "abstract.tex").write_text(ab.replace("%", r"\%") + "\n")
