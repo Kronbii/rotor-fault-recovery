@@ -73,6 +73,10 @@ class SimResult:
     fault_rotor: int
     fault_magnitude: float
     true_params: dict = field(default_factory=dict)
+    # measured signals, only with simulate(..., record_sensors=True) (synthetic flight logs)
+    gyro_meas: np.ndarray | None = None  # (N, 3) gyro as sampled, rad/s
+    accel_meas: np.ndarray | None = None  # (N, 3) accelerometer as sampled, m/s^2
+    v_body_est: np.ndarray | None = None  # (N, 3) estimated velocity in body axes, m/s
 
     @property
     def position(self):
@@ -94,6 +98,7 @@ def simulate(
     fdi_cfg: FDIConfig | None = None,
     options: StackOptions | None = None,
     cfg: SimConfig | None = None,
+    record_sensors: bool = False,
 ) -> SimResult:
     cfg = cfg or SimConfig()
     ss = np.random.SeedSequence(seed)
@@ -132,6 +137,8 @@ def simulate(
     log_resid = np.zeros((n, 4))
     log_bank = np.zeros((n, len(stack.fdi.cfg.deltas)))
     log_est = np.zeros((n, 3))
+    if record_sensors:
+        log_gyro, log_acc, log_vb = np.zeros((n, 3)), np.zeros((n, 3)), np.zeros((n, 3))
 
     faults = scenario.faults
     onset = faults.first_onset
@@ -170,6 +177,10 @@ def simulate(
         log_resid[k] = fd.residual * fd.sigma
         log_bank[k] = fd.cusum_bank
         log_est[k] = stack.est.p
+        if record_sensors:
+            log_gyro[k] = imu.gyro
+            log_acc[k] = imu.accel
+            log_vb[k] = stack.est.R.T @ stack.est.v
 
         for _ in range(cfg.physics_substeps):
             x = dyn.step(x, w_cmd, eta, cfg.dt_phys, dist)
@@ -226,4 +237,7 @@ def simulate(
             "rot_damping": true_p.rot_damping.tolist(),
             "k_f_scale": true_p.k_f_scale.tolist(),
         },
+        gyro_meas=log_gyro[sl] if record_sensors else None,
+        accel_meas=log_acc[sl] if record_sensors else None,
+        v_body_est=log_vb[sl] if record_sensors else None,
     )
