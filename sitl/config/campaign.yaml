@@ -1,0 +1,54 @@
+# PX4 SITL campaign (x500, Gazebo Harmonic, headless). Read by sitl/campaign.py.
+# Every run gets its own Gazebo sensor-noise seed; motor, loss and onset of the faulty
+# runs are drawn from numpy.random.default_rng(seed). Seed ranges are disjoint, and the
+# diagnoser's residual floor and thresholds come only from the "calibration" group.
+speed_factor: 4          # Gazebo real-time factor (PX4 follows the simulation clock)
+altitude_m: 6.0
+orbit: {radius_m: 5.0, speed_m_s: 3.0}   # MAV_CMD_DO_ORBIT, nose to the centre
+conditions:              # trajectory x Gazebo world
+  hover-calm:  {traj: hover, world: default}
+  orbit-calm:  {traj: orbit, world: default}
+  hover-wind:  {traj: hover, world: windy}    # steady 5.4 m/s wind (PX4's windy.sdf)
+  orbit-wind:  {traj: orbit, world: windy}
+groups:
+  calibration:           # fault-free; residual floor and CUSUM thresholds
+    seed0: 9000
+    per_condition: 6
+    fault: none
+    pre_s: 30
+  free:                  # fault-free evaluation (false alarms)
+    seed0: 1000
+    per_condition: 6
+    fault: none
+    pre_s: 30
+  partial:               # simulated-ESC loss: random motor, loss ~ U[lo, hi], onset ~ U[lo, hi]
+    seed0: 2000
+    per_condition: 10
+    fault: esc
+    loe: [0.15, 0.5]
+    onset_s: [8, 14]
+    post_s: 8
+  complete:              # simulated-ESC loss of 100 %, each motor in turn
+    seed0: 3000
+    per_condition: 4
+    fault: esc
+    loe: 1.0
+    onset_s: [8, 14]
+    post_s: 6
+  px4_off_default:       # the same with PX4's default CA_FAILURE_MODE = 0: does it act at all?
+    seed0: 4500
+    per_condition: 2
+    conditions: [hover-calm]
+    fault: px4_off
+    loe: 1.0
+    onset_s: [8, 14]
+    post_s: 6
+    extra_params: {CA_FAILURE_MODE: 0}
+  px4_off:               # PX4's own failure injection (failure motor off), behaviour only
+    seed0: 4000
+    per_condition: 4
+    conditions: [hover-calm]
+    fault: px4_off
+    loe: 1.0
+    onset_s: [8, 14]
+    post_s: 6

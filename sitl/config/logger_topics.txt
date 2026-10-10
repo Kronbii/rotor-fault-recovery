@@ -1,0 +1,20 @@
+# Extra ULog topics for the rotor-fault SITL runs, added on top of PX4's default profile.
+# Format: <topic> [<interval_ms> [<instance>]]; interval 0 = every message.
+# The diagnoser needs the IMU, the motor commands and the velocity estimate at full rate;
+# actuator_outputs (the simulated ESC output) and the ground-truth topics are logged only
+# to establish the true fault onset and the outcome, never as diagnoser inputs.
+sensor_combined 0
+vehicle_angular_velocity 0
+vehicle_attitude 0
+vehicle_local_position 0
+actuator_motors 0
+actuator_outputs 0
+esc_status 0
+failure_detector_status 0
+control_allocator_status 0
+vehicle_thrust_setpoint 0
+vehicle_torque_setpoint 0
+vehicle_attitude_groundtruth 0
+vehicle_angular_velocity_groundtruth 0
+vehicle_local_position_groundtruth 0
+hover_thrust_estimate 0
