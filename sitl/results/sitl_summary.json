@@ -1,0 +1,2995 @@
+{
+ "px4_version": "18098d3bbe9df8457a8b33d00eedece78bd28c89",
+ "px4_describe": "v1.18.0-beta1-322-g18098d3bbe",
+ "rate_hz": 250.0,
+ "delay_steps": 1,
+ "n_runs_total": 110,
+ "n_calibration": 24,
+ "calibration_minutes": 12.000533,
+ "variants": {
+  "proposed": {
+   "fault_free": {
+    "n_runs": 24,
+    "minutes": 12.000867,
+    "false_alarm_runs": 0,
+    "pre_onset_minutes": 10.2932,
+    "false_alarms_pre_onset": 0,
+    "false_alarms_per_min": 0.0,
+    "by_condition": {
+     "hover-calm": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.000333
+     },
+     "hover-wind": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.0
+     },
+     "orbit-calm": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.0004
+     },
+     "orbit-wind": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.000133
+     }
+    }
+   },
+   "px4_off_default": {
+    "n": 2,
+    "injection_effective": 0,
+    "min_esc_output_after": 767.863525,
+    "max_tilt_deg": 0.389277,
+    "diagnoser_alarms": 0
+   },
+   "partial": {
+    "n": 40,
+    "detected": 40,
+    "detected_ci95": [
+     0.912375,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 40,
+     "mean": 122.2,
+     "std": 4.975942,
+     "median": 120.0,
+     "p25": 120.0,
+     "p75": 124.0,
+     "p95": 128.0,
+     "min": 112.0,
+     "max": 144.0
+    },
+    "isolation_correct": 40,
+    "isolation_accuracy": 1.0,
+    "loe_abs_err": {
+     "n": 40,
+     "mean": 0.009388,
+     "std": 0.011234,
+     "median": 0.005074,
+     "p25": 0.001288,
+     "p75": 0.012733,
+     "p95": 0.039085,
+     "min": 3e-06,
+     "max": 0.040224
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 0,
+    "px4_flags": [],
+    "px4_delay_ms": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "px4_fd_motor": 0,
+    "lost": 16,
+    "px4_held": 21,
+    "px4_descended": 18,
+    "px4_flipped": 1,
+    "time_to_loss_s": {
+     "n": 16,
+     "mean": 3.8375,
+     "std": 1.060903,
+     "median": 3.67,
+     "p25": 3.054,
+     "p75": 4.174,
+     "p95": 5.702,
+     "min": 2.552,
+     "max": 6.176
+    },
+    "alarm_before_loss": 16,
+    "px4_after_loss": 0,
+    "max_tilt_deg": {
+     "n": 24,
+     "mean": 10.309327,
+     "std": 2.838871,
+     "median": 9.838855,
+     "p25": 8.502216,
+     "p75": 12.605811,
+     "p95": 14.633476,
+     "min": 4.367669,
+     "max": 15.075253
+    },
+    "alt_loss_m": {
+     "n": 24,
+     "mean": 0.475465,
+     "std": 1.038128,
+     "median": 0.094017,
+     "p25": 0.059217,
+     "p75": 0.229233,
+     "p95": 2.367826,
+     "min": 0.028966,
+     "max": 4.71122
+    },
+    "max_yaw_rate": {
+     "n": 24,
+     "mean": 0.389532,
+     "std": 0.242734,
+     "median": 0.231776,
+     "p25": 0.176604,
+     "p75": 0.619964,
+     "p95": 0.748349,
+     "min": 0.103231,
+     "max": 0.754983
+    },
+    "loe_range": [
+     0.188295,
+     0.4816
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 121.6,
+       "std": 3.2,
+       "median": 120.0,
+       "p25": 120.0,
+       "p75": 124.0,
+       "p95": 126.2,
+       "min": 116.0,
+       "max": 128.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.001151,
+       "std": 0.001054,
+       "median": 0.000812,
+       "p25": 0.000519,
+       "p75": 0.001288,
+       "p95": 0.003098,
+       "min": 3e-06,
+       "max": 0.003447
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 4,
+      "px4_descended": 6,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 3.746,
+       "std": 1.039656,
+       "median": 3.192,
+       "p25": 3.143,
+       "p75": 3.795,
+       "p95": 5.1942,
+       "min": 3.056,
+       "max": 5.544
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 6,
+       "mean": 7.141841,
+       "std": 1.805885,
+       "median": 7.350105,
+       "p25": 5.84793,
+       "p75": 8.373567,
+       "p95": 9.430854,
+       "min": 4.367669,
+       "max": 9.721243
+      },
+      "alt_loss_m": {
+       "n": 6,
+       "mean": 0.843026,
+       "std": 0.876425,
+       "median": 0.50997,
+       "p25": 0.163113,
+       "p75": 1.165877,
+       "p95": 2.244072,
+       "min": 0.052751,
+       "max": 2.553457
+      },
+      "max_yaw_rate": {
+       "n": 6,
+       "mean": 0.170482,
+       "std": 0.04924,
+       "median": 0.174607,
+       "p25": 0.126816,
+       "p75": 0.214003,
+       "p95": 0.229187,
+       "min": 0.103231,
+       "max": 0.232425
+      },
+      "loe_range": [
+       0.223933,
+       0.462685
+      ]
+     },
+     "hover-wind": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 122.4,
+       "std": 1.959592,
+       "median": 124.0,
+       "p25": 120.0,
+       "p75": 124.0,
+       "p95": 124.0,
+       "min": 120.0,
+       "max": 124.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.004279,
+       "std": 0.002806,
+       "median": 0.004264,
+       "p25": 0.001806,
+       "p75": 0.00651,
+       "p95": 0.008176,
+       "min": 0.00019,
+       "max": 0.008951
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 3,
+      "px4_held": 6,
+      "px4_descended": 4,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 3,
+       "mean": 4.666667,
+       "std": 0.664067,
+       "median": 4.72,
+       "p25": 4.274,
+       "p75": 5.086,
+       "p95": 5.3788,
+       "min": 3.828,
+       "max": 5.452
+      },
+      "alarm_before_loss": 3,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 7,
+       "mean": 9.525924,
+       "std": 1.763895,
+       "median": 9.783315,
+       "p25": 9.018833,
+       "p75": 10.109211,
+       "p95": 11.801649,
+       "min": 6.207151,
+       "max": 12.434916
+      },
+      "alt_loss_m": {
+       "n": 7,
+       "mean": 0.774294,
+       "std": 1.607989,
+       "median": 0.096478,
+       "p25": 0.082165,
+       "p75": 0.188389,
+       "p95": 3.362571,
+       "min": 0.071256,
+       "max": 4.71122
+      },
+      "max_yaw_rate": {
+       "n": 7,
+       "mean": 0.172554,
+       "std": 0.039672,
+       "median": 0.184931,
+       "p25": 0.13692,
+       "p75": 0.200952,
+       "p95": 0.22235,
+       "min": 0.116074,
+       "max": 0.231127
+      },
+      "loe_range": [
+       0.25877,
+       0.437765
+      ]
+     },
+     "orbit-calm": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 122.0,
+       "std": 3.687818,
+       "median": 120.0,
+       "p25": 120.0,
+       "p75": 124.0,
+       "p95": 128.0,
+       "min": 116.0,
+       "max": 128.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.008392,
+       "std": 0.004351,
+       "median": 0.008713,
+       "p25": 0.004586,
+       "p75": 0.012465,
+       "p95": 0.013429,
+       "min": 0.001689,
+       "max": 0.013717
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 2,
+      "px4_held": 8,
+      "px4_descended": 2,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 2,
+       "mean": 2.926,
+       "std": 0.122,
+       "median": 2.926,
+       "p25": 2.865,
+       "p75": 2.987,
+       "p95": 3.0358,
+       "min": 2.804,
+       "max": 3.048
+      },
+      "alarm_before_loss": 2,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 8,
+       "mean": 12.501091,
+       "std": 2.006776,
+       "median": 12.99013,
+       "p25": 11.017521,
+       "p75": 13.827092,
+       "p95": 14.99119,
+       "min": 9.532401,
+       "max": 15.075253
+      },
+      "alt_loss_m": {
+       "n": 8,
+       "mean": 0.087098,
+       "std": 0.071568,
+       "median": 0.056874,
+       "p25": 0.054516,
+       "p75": 0.083658,
+       "p95": 0.209546,
+       "min": 0.028966,
+       "max": 0.269762
+      },
+      "max_yaw_rate": {
+       "n": 8,
+       "mean": 0.660646,
+       "std": 0.066309,
+       "median": 0.635263,
+       "p25": 0.601619,
+       "p75": 0.728108,
+       "p95": 0.754432,
+       "min": 0.585499,
+       "max": 0.754983
+      },
+      "loe_range": [
+       0.188295,
+       0.4816
+      ]
+     },
+     "orbit-wind": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 122.8,
+       "std": 8.4,
+       "median": 122.0,
+       "p25": 117.0,
+       "p75": 124.0,
+       "p95": 136.8,
+       "min": 112.0,
+       "max": 144.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.023729,
+       "std": 0.013278,
+       "median": 0.022867,
+       "p25": 0.015218,
+       "p75": 0.037472,
+       "p95": 0.039766,
+       "min": 0.002547,
+       "max": 0.040224
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 7,
+      "px4_held": 3,
+      "px4_descended": 6,
+      "px4_flipped": 1,
+      "time_to_loss_s": {
+       "n": 7,
+       "mean": 3.794857,
+       "std": 1.105929,
+       "median": 3.756,
+       "p25": 3.128,
+       "p75": 3.912,
+       "p95": 5.5208,
+       "min": 2.552,
+       "max": 6.176
+      },
+      "alarm_before_loss": 7,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 3,
+       "mean": 12.627538,
+       "std": 0.519627,
+       "median": 12.905136,
+       "p25": 12.40231,
+       "p75": 12.991566,
+       "p95": 13.060709,
+       "min": 11.899484,
+       "max": 13.077995
+      },
+      "alt_loss_m": {
+       "n": 3,
+       "mean": 0.078717,
+       "std": 0.021337,
+       "median": 0.068199,
+       "p25": 0.063841,
+       "p75": 0.088334,
+       "p95": 0.104442,
+       "min": 0.059482,
+       "max": 0.108469
+      },
+      "max_yaw_rate": {
+       "n": 3,
+       "mean": 0.610946,
+       "std": 0.01618,
+       "median": 0.617813,
+       "p25": 0.603211,
+       "p75": 0.622115,
+       "p95": 0.625556,
+       "min": 0.58861,
+       "max": 0.626416
+      },
+      "loe_range": [
+       0.205898,
+       0.4816
+      ]
+     }
+    },
+    "by_loe": [
+     {
+      "lo": 0.15,
+      "hi": 0.25,
+      "n": 5,
+      "detected": 5,
+      "detected_ci95": [
+       0.565509,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 5,
+       "mean": 117.6,
+       "std": 3.2,
+       "median": 120.0,
+       "p25": 116.0,
+       "p75": 120.0,
+       "p95": 120.0,
+       "min": 112.0,
+       "max": 120.0
+      },
+      "isolation_correct": 5,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 5,
+       "mean": 0.014185,
+       "std": 0.013272,
+       "median": 0.012005,
+       "p25": 0.005822,
+       "p75": 0.013076,
+       "p95": 0.03398,
+       "min": 0.000816,
+       "max": 0.039206
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 0,
+      "px4_held": 5,
+      "px4_descended": 0,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 5,
+       "mean": 9.973565,
+       "std": 2.965662,
+       "median": 11.487723,
+       "p25": 9.606915,
+       "p75": 11.899484,
+       "p95": 12.384725,
+       "min": 4.367669,
+       "max": 12.506036
+      },
+      "alt_loss_m": {
+       "n": 5,
+       "mean": 0.110613,
+       "std": 0.082967,
+       "median": 0.059482,
+       "p25": 0.055327,
+       "p75": 0.116092,
+       "p95": 0.239028,
+       "min": 0.052402,
+       "max": 0.269762
+      },
+      "max_yaw_rate": {
+       "n": 5,
+       "mean": 0.510067,
+       "std": 0.204113,
+       "median": 0.602701,
+       "p25": 0.585499,
+       "p75": 0.626416,
+       "p95": 0.631272,
+       "min": 0.103231,
+       "max": 0.632486
+      },
+      "loe_range": [
+       0.188295,
+       0.230592
+      ]
+     },
+     {
+      "lo": 0.25,
+      "hi": 0.35,
+      "n": 11,
+      "detected": 11,
+      "detected_ci95": [
+       0.74116,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 11,
+       "mean": 119.636364,
+       "std": 2.057038,
+       "median": 120.0,
+       "p25": 120.0,
+       "p75": 120.0,
+       "p95": 122.0,
+       "min": 116.0,
+       "max": 124.0
+      },
+      "isolation_correct": 11,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 11,
+       "mean": 0.004587,
+       "std": 0.004305,
+       "median": 0.003398,
+       "p25": 0.001432,
+       "p75": 0.005504,
+       "p95": 0.012867,
+       "min": 0.000649,
+       "max": 0.014414
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 0,
+      "px4_held": 10,
+      "px4_descended": 1,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 11,
+       "mean": 10.380743,
+       "std": 3.215697,
+       "median": 9.707864,
+       "p25": 7.607403,
+       "p75": 13.27611,
+       "p95": 14.283176,
+       "min": 5.502239,
+       "max": 15.075253
+      },
+      "alt_loss_m": {
+       "n": 11,
+       "mean": 0.294996,
+       "std": 0.714481,
+       "median": 0.071256,
+       "p25": 0.056821,
+       "p75": 0.087725,
+       "p95": 1.330963,
+       "min": 0.028966,
+       "max": 2.553457
+      },
+      "max_yaw_rate": {
+       "n": 11,
+       "mean": 0.416,
+       "std": 0.263428,
+       "median": 0.58861,
+       "p25": 0.13692,
+       "p75": 0.627927,
+       "p95": 0.736542,
+       "min": 0.116074,
+       "max": 0.753409
+      },
+      "loe_range": [
+       0.253259,
+       0.312964
+      ]
+     },
+     {
+      "lo": 0.35,
+      "hi": 0.5,
+      "n": 24,
+      "detected": 24,
+      "detected_ci95": [
+       0.862019,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 24,
+       "mean": 124.333333,
+       "std": 5.022173,
+       "median": 124.0,
+       "p25": 123.0,
+       "p75": 124.0,
+       "p95": 128.0,
+       "min": 116.0,
+       "max": 144.0
+      },
+      "isolation_correct": 24,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 24,
+       "mean": 0.010589,
+       "std": 0.01218,
+       "median": 0.005672,
+       "p25": 0.001288,
+       "p75": 0.014695,
+       "p95": 0.038115,
+       "min": 3e-06,
+       "max": 0.040224
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 16,
+      "px4_held": 6,
+      "px4_descended": 17,
+      "px4_flipped": 1,
+      "time_to_loss_s": {
+       "n": 16,
+       "mean": 3.8375,
+       "std": 1.060903,
+       "median": 3.67,
+       "p25": 3.054,
+       "p75": 4.174,
+       "p95": 5.702,
+       "min": 2.552,
+       "max": 6.176
+      },
+      "alarm_before_loss": 16,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 8,
+       "mean": 10.420983,
+       "std": 2.090979,
+       "median": 9.838855,
+       "p25": 9.430854,
+       "p75": 10.851748,
+       "p95": 13.995018,
+       "min": 7.815207,
+       "max": 14.835073
+      },
+      "alt_loss_m": {
+       "n": 8,
+       "mean": 0.951641,
+       "std": 1.473835,
+       "median": 0.259949,
+       "p25": 0.14522,
+       "p75": 0.865803,
+       "p95": 3.522863,
+       "min": 0.091556,
+       "max": 4.71122
+      },
+      "max_yaw_rate": {
+       "n": 8,
+       "mean": 0.277804,
+       "std": 0.181043,
+       "median": 0.210672,
+       "p25": 0.199423,
+       "p75": 0.231451,
+       "p95": 0.572087,
+       "min": 0.184931,
+       "max": 0.754983
+      },
+      "loe_range": [
+       0.350307,
+       0.4816
+      ]
+     }
+    ]
+   },
+   "complete": {
+    "n": 16,
+    "detected": 16,
+    "detected_ci95": [
+     0.806387,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 16,
+     "mean": 132.0,
+     "std": 6.324555,
+     "median": 132.0,
+     "p25": 131.0,
+     "p75": 136.0,
+     "p95": 141.0,
+     "min": 120.0,
+     "max": 144.0
+    },
+    "isolation_correct": 16,
+    "isolation_accuracy": 1.0,
+    "loe_abs_err": {
+     "n": 16,
+     "mean": 0.009304,
+     "std": 0.01772,
+     "median": 0.0,
+     "p25": 0.0,
+     "p75": 0.005346,
+     "p95": 0.050382,
+     "min": 0.0,
+     "max": 0.054605
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 16,
+    "px4_flags": [
+     "fd_roll"
+    ],
+    "px4_delay_ms": {
+     "n": 16,
+     "mean": 665.75,
+     "std": 9.270248,
+     "median": 664.0,
+     "p25": 660.0,
+     "p75": 673.0,
+     "p95": 678.0,
+     "min": 644.0,
+     "max": 684.0
+    },
+    "px4_fd_motor": 0,
+    "lost": 16,
+    "px4_held": 0,
+    "px4_descended": 0,
+    "px4_flipped": 16,
+    "time_to_loss_s": {
+     "n": 16,
+     "mean": 0.48675,
+     "std": 0.025089,
+     "median": 0.486,
+     "p25": 0.464,
+     "p75": 0.503,
+     "p95": 0.524,
+     "min": 0.452,
+     "max": 0.536
+    },
+    "alarm_before_loss": 16,
+    "px4_after_loss": 16,
+    "max_tilt_deg": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "alt_loss_m": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "max_yaw_rate": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "loe_range": [
+     1.0,
+     1.0
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 133.0,
+       "std": 1.732051,
+       "median": 132.0,
+       "p25": 132.0,
+       "p75": 133.0,
+       "p95": 135.4,
+       "min": 132.0,
+       "max": 136.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.0,
+       "std": 0.0,
+       "median": 0.0,
+       "p25": 0.0,
+       "p75": 0.0,
+       "p95": 0.0,
+       "min": 0.0,
+       "max": 0.0
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 670.0,
+       "std": 6.0,
+       "median": 670.0,
+       "p25": 664.0,
+       "p75": 676.0,
+       "p95": 676.0,
+       "min": 664.0,
+       "max": 676.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.479,
+       "std": 0.022159,
+       "median": 0.476,
+       "p25": 0.464,
+       "p75": 0.491,
+       "p95": 0.5078,
+       "min": 0.452,
+       "max": 0.512
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "hover-wind": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 133.0,
+       "std": 3.316625,
+       "median": 134.0,
+       "p25": 131.0,
+       "p75": 136.0,
+       "p95": 136.0,
+       "min": 128.0,
+       "max": 136.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.025895,
+       "std": 0.025971,
+       "median": 0.024487,
+       "p25": 0.0,
+       "p75": 0.050382,
+       "p95": 0.053761,
+       "min": 0.0,
+       "max": 0.054605
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 659.0,
+       "std": 9.110434,
+       "median": 662.0,
+       "p25": 656.0,
+       "p75": 665.0,
+       "p95": 667.4,
+       "min": 644.0,
+       "max": 668.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.492,
+       "std": 0.036442,
+       "median": 0.488,
+       "p25": 0.456,
+       "p75": 0.524,
+       "p95": 0.5336,
+       "min": 0.456,
+       "max": 0.536
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "orbit-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 132.0,
+       "std": 7.483315,
+       "median": 134.0,
+       "p25": 129.0,
+       "p75": 137.0,
+       "p95": 139.4,
+       "min": 120.0,
+       "max": 140.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.005976,
+       "std": 0.010351,
+       "median": 0.0,
+       "p25": 0.0,
+       "p75": 0.005976,
+       "p95": 0.020319,
+       "min": 0.0,
+       "max": 0.023905
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 667.0,
+       "std": 9.949874,
+       "median": 662.0,
+       "p25": 660.0,
+       "p75": 669.0,
+       "p95": 681.0,
+       "min": 660.0,
+       "max": 684.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.494,
+       "std": 0.018868,
+       "median": 0.498,
+       "p25": 0.488,
+       "p75": 0.504,
+       "p95": 0.5136,
+       "min": 0.464,
+       "max": 0.516
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "orbit-wind": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 130.0,
+       "std": 9.165151,
+       "median": 128.0,
+       "p25": 123.0,
+       "p75": 135.0,
+       "p95": 142.2,
+       "min": 120.0,
+       "max": 144.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.005346,
+       "std": 0.00926,
+       "median": 0.0,
+       "p25": 0.0,
+       "p75": 0.005346,
+       "p95": 0.018177,
+       "min": 0.0,
+       "max": 0.021385
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 667.0,
+       "std": 7.681146,
+       "median": 668.0,
+       "p25": 662.0,
+       "p75": 673.0,
+       "p95": 675.4,
+       "min": 656.0,
+       "max": 676.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.482,
+       "std": 0.013416,
+       "median": 0.482,
+       "p25": 0.473,
+       "p75": 0.491,
+       "p95": 0.4982,
+       "min": 0.464,
+       "max": 0.5
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "px4_off": {
+    "n": 4,
+    "detected": 4,
+    "detected_ci95": [
+     0.5101,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 4,
+     "mean": 1217.0,
+     "std": 4.358899,
+     "median": 1216.0,
+     "p25": 1215.0,
+     "p75": 1218.0,
+     "p95": 1222.8,
+     "min": 1212.0,
+     "max": 1224.0
+    },
+    "isolation_correct": 0,
+    "isolation_accuracy": 0.0,
+    "loe_abs_err": {
+     "n": 4,
+     "mean": 1.003057,
+     "std": 0.000801,
+     "median": 1.002742,
+     "p25": 1.002428,
+     "p75": 1.00337,
+     "p95": 1.004171,
+     "min": 1.002374,
+     "max": 1.004371
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 4,
+    "px4_flags": [
+     "fd_roll"
+    ],
+    "px4_delay_ms": {
+     "n": 4,
+     "mean": 660.0,
+     "std": 0.0,
+     "median": 660.0,
+     "p25": 660.0,
+     "p75": 660.0,
+     "p95": 660.0,
+     "min": 660.0,
+     "max": 660.0
+    },
+    "px4_fd_motor": 0,
+    "lost": 4,
+    "px4_held": 0,
+    "px4_descended": 0,
+    "px4_flipped": 4,
+    "time_to_loss_s": {
+     "n": 4,
+     "mean": 0.464,
+     "std": 0.014142,
+     "median": 0.458,
+     "p25": 0.455,
+     "p75": 0.467,
+     "p95": 0.4838,
+     "min": 0.452,
+     "max": 0.488
+    },
+    "alarm_before_loss": 0,
+    "px4_after_loss": 4,
+    "max_tilt_deg": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "alt_loss_m": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "max_yaw_rate": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "loe_range": [
+     1.0,
+     1.0
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 1217.0,
+       "std": 4.358899,
+       "median": 1216.0,
+       "p25": 1215.0,
+       "p75": 1218.0,
+       "p95": 1222.8,
+       "min": 1212.0,
+       "max": 1224.0
+      },
+      "isolation_correct": 0,
+      "isolation_accuracy": 0.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 1.003057,
+       "std": 0.000801,
+       "median": 1.002742,
+       "p25": 1.002428,
+       "p75": 1.00337,
+       "p95": 1.004171,
+       "min": 1.002374,
+       "max": 1.004371
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 660.0,
+       "std": 0.0,
+       "median": 660.0,
+       "p25": 660.0,
+       "p75": 660.0,
+       "p95": 660.0,
+       "min": 660.0,
+       "max": 660.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.464,
+       "std": 0.014142,
+       "median": 0.458,
+       "p25": 0.455,
+       "p75": 0.467,
+       "p95": 0.4838,
+       "min": 0.452,
+       "max": 0.488
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   }
+  },
+  "no_adaptive": {
+   "fault_free": {
+    "n_runs": 24,
+    "minutes": 12.000867,
+    "false_alarm_runs": 0,
+    "pre_onset_minutes": 10.2932,
+    "false_alarms_pre_onset": 0,
+    "false_alarms_per_min": 0.0,
+    "by_condition": {
+     "hover-calm": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.000333
+     },
+     "hover-wind": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.0
+     },
+     "orbit-calm": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.0004
+     },
+     "orbit-wind": {
+      "n": 6,
+      "false_alarms": 0,
+      "minutes": 3.000133
+     }
+    }
+   },
+   "px4_off_default": {
+    "n": 2,
+    "injection_effective": 0,
+    "min_esc_output_after": 767.863525,
+    "max_tilt_deg": 0.389277,
+    "diagnoser_alarms": 0
+   },
+   "partial": {
+    "n": 40,
+    "detected": 40,
+    "detected_ci95": [
+     0.912375,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 40,
+     "mean": 41.2,
+     "std": 6.823489,
+     "median": 40.0,
+     "p25": 36.0,
+     "p75": 45.0,
+     "p95": 56.0,
+     "min": 32.0,
+     "max": 60.0
+    },
+    "isolation_correct": 38,
+    "isolation_accuracy": 0.95,
+    "loe_abs_err": {
+     "n": 40,
+     "mean": 0.01056,
+     "std": 0.011942,
+     "median": 0.005729,
+     "p25": 0.001969,
+     "p75": 0.013749,
+     "p95": 0.037464,
+     "min": 0.00032,
+     "max": 0.042733
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 0,
+    "px4_flags": [],
+    "px4_delay_ms": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "px4_fd_motor": 0,
+    "lost": 16,
+    "px4_held": 21,
+    "px4_descended": 18,
+    "px4_flipped": 1,
+    "time_to_loss_s": {
+     "n": 16,
+     "mean": 3.8375,
+     "std": 1.060903,
+     "median": 3.67,
+     "p25": 3.054,
+     "p75": 4.174,
+     "p95": 5.702,
+     "min": 2.552,
+     "max": 6.176
+    },
+    "alarm_before_loss": 16,
+    "px4_after_loss": 0,
+    "max_tilt_deg": {
+     "n": 24,
+     "mean": 10.309327,
+     "std": 2.838871,
+     "median": 9.838855,
+     "p25": 8.502216,
+     "p75": 12.605811,
+     "p95": 14.633476,
+     "min": 4.367669,
+     "max": 15.075253
+    },
+    "alt_loss_m": {
+     "n": 24,
+     "mean": 0.475465,
+     "std": 1.038128,
+     "median": 0.094017,
+     "p25": 0.059217,
+     "p75": 0.229233,
+     "p95": 2.367826,
+     "min": 0.028966,
+     "max": 4.71122
+    },
+    "max_yaw_rate": {
+     "n": 24,
+     "mean": 0.389532,
+     "std": 0.242734,
+     "median": 0.231776,
+     "p25": 0.176604,
+     "p75": 0.619964,
+     "p95": 0.748349,
+     "min": 0.103231,
+     "max": 0.754983
+    },
+    "loe_range": [
+     0.188295,
+     0.4816
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 40.4,
+       "std": 5.782733,
+       "median": 40.0,
+       "p25": 36.0,
+       "p75": 43.0,
+       "p95": 50.2,
+       "min": 32.0,
+       "max": 52.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.002008,
+       "std": 0.001597,
+       "median": 0.001661,
+       "p25": 0.001109,
+       "p75": 0.001969,
+       "p95": 0.00495,
+       "min": 0.00032,
+       "max": 0.005977
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 4,
+      "px4_descended": 6,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 3.746,
+       "std": 1.039656,
+       "median": 3.192,
+       "p25": 3.143,
+       "p75": 3.795,
+       "p95": 5.1942,
+       "min": 3.056,
+       "max": 5.544
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 6,
+       "mean": 7.141841,
+       "std": 1.805885,
+       "median": 7.350105,
+       "p25": 5.84793,
+       "p75": 8.373567,
+       "p95": 9.430854,
+       "min": 4.367669,
+       "max": 9.721243
+      },
+      "alt_loss_m": {
+       "n": 6,
+       "mean": 0.843026,
+       "std": 0.876425,
+       "median": 0.50997,
+       "p25": 0.163113,
+       "p75": 1.165877,
+       "p95": 2.244072,
+       "min": 0.052751,
+       "max": 2.553457
+      },
+      "max_yaw_rate": {
+       "n": 6,
+       "mean": 0.170482,
+       "std": 0.04924,
+       "median": 0.174607,
+       "p25": 0.126816,
+       "p75": 0.214003,
+       "p95": 0.229187,
+       "min": 0.103231,
+       "max": 0.232425
+      },
+      "loe_range": [
+       0.223933,
+       0.462685
+      ]
+     },
+     "hover-wind": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 40.0,
+       "std": 4.732864,
+       "median": 38.0,
+       "p25": 36.0,
+       "p75": 43.0,
+       "p95": 48.0,
+       "min": 36.0,
+       "max": 48.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.004907,
+       "std": 0.001915,
+       "median": 0.004338,
+       "p25": 0.004094,
+       "p75": 0.005456,
+       "p95": 0.008078,
+       "min": 0.00125,
+       "max": 0.008439
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 3,
+      "px4_held": 6,
+      "px4_descended": 4,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 3,
+       "mean": 4.666667,
+       "std": 0.664067,
+       "median": 4.72,
+       "p25": 4.274,
+       "p75": 5.086,
+       "p95": 5.3788,
+       "min": 3.828,
+       "max": 5.452
+      },
+      "alarm_before_loss": 3,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 7,
+       "mean": 9.525924,
+       "std": 1.763895,
+       "median": 9.783315,
+       "p25": 9.018833,
+       "p75": 10.109211,
+       "p95": 11.801649,
+       "min": 6.207151,
+       "max": 12.434916
+      },
+      "alt_loss_m": {
+       "n": 7,
+       "mean": 0.774294,
+       "std": 1.607989,
+       "median": 0.096478,
+       "p25": 0.082165,
+       "p75": 0.188389,
+       "p95": 3.362571,
+       "min": 0.071256,
+       "max": 4.71122
+      },
+      "max_yaw_rate": {
+       "n": 7,
+       "mean": 0.172554,
+       "std": 0.039672,
+       "median": 0.184931,
+       "p25": 0.13692,
+       "p75": 0.200952,
+       "p95": 0.22235,
+       "min": 0.116074,
+       "max": 0.231127
+      },
+      "loe_range": [
+       0.25877,
+       0.437765
+      ]
+     },
+     "orbit-calm": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 44.0,
+       "std": 7.589466,
+       "median": 42.0,
+       "p25": 40.0,
+       "p75": 48.0,
+       "p95": 56.0,
+       "min": 32.0,
+       "max": 56.0
+      },
+      "isolation_correct": 10,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.007684,
+       "std": 0.004497,
+       "median": 0.007949,
+       "p25": 0.004394,
+       "p75": 0.009705,
+       "p95": 0.014503,
+       "min": 0.001194,
+       "max": 0.014783
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 2,
+      "px4_held": 8,
+      "px4_descended": 2,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 2,
+       "mean": 2.926,
+       "std": 0.122,
+       "median": 2.926,
+       "p25": 2.865,
+       "p75": 2.987,
+       "p95": 3.0358,
+       "min": 2.804,
+       "max": 3.048
+      },
+      "alarm_before_loss": 2,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 8,
+       "mean": 12.501091,
+       "std": 2.006776,
+       "median": 12.99013,
+       "p25": 11.017521,
+       "p75": 13.827092,
+       "p95": 14.99119,
+       "min": 9.532401,
+       "max": 15.075253
+      },
+      "alt_loss_m": {
+       "n": 8,
+       "mean": 0.087098,
+       "std": 0.071568,
+       "median": 0.056874,
+       "p25": 0.054516,
+       "p75": 0.083658,
+       "p95": 0.209546,
+       "min": 0.028966,
+       "max": 0.269762
+      },
+      "max_yaw_rate": {
+       "n": 8,
+       "mean": 0.660646,
+       "std": 0.066309,
+       "median": 0.635263,
+       "p25": 0.601619,
+       "p75": 0.728108,
+       "p95": 0.754432,
+       "min": 0.585499,
+       "max": 0.754983
+      },
+      "loe_range": [
+       0.188295,
+       0.4816
+      ]
+     },
+     "orbit-wind": {
+      "n": 10,
+      "detected": 10,
+      "detected_ci95": [
+       0.72246,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 10,
+       "mean": 40.4,
+       "std": 7.889233,
+       "median": 36.0,
+       "p25": 36.0,
+       "p75": 43.0,
+       "p95": 54.6,
+       "min": 32.0,
+       "max": 60.0
+      },
+      "isolation_correct": 8,
+      "isolation_accuracy": 0.8,
+      "loe_abs_err": {
+       "n": 10,
+       "mean": 0.027642,
+       "std": 0.011782,
+       "median": 0.031703,
+       "p25": 0.01538,
+       "p75": 0.036914,
+       "p95": 0.042,
+       "min": 0.010251,
+       "max": 0.042733
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 7,
+      "px4_held": 3,
+      "px4_descended": 6,
+      "px4_flipped": 1,
+      "time_to_loss_s": {
+       "n": 7,
+       "mean": 3.794857,
+       "std": 1.105929,
+       "median": 3.756,
+       "p25": 3.128,
+       "p75": 3.912,
+       "p95": 5.5208,
+       "min": 2.552,
+       "max": 6.176
+      },
+      "alarm_before_loss": 7,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 3,
+       "mean": 12.627538,
+       "std": 0.519627,
+       "median": 12.905136,
+       "p25": 12.40231,
+       "p75": 12.991566,
+       "p95": 13.060709,
+       "min": 11.899484,
+       "max": 13.077995
+      },
+      "alt_loss_m": {
+       "n": 3,
+       "mean": 0.078717,
+       "std": 0.021337,
+       "median": 0.068199,
+       "p25": 0.063841,
+       "p75": 0.088334,
+       "p95": 0.104442,
+       "min": 0.059482,
+       "max": 0.108469
+      },
+      "max_yaw_rate": {
+       "n": 3,
+       "mean": 0.610946,
+       "std": 0.01618,
+       "median": 0.617813,
+       "p25": 0.603211,
+       "p75": 0.622115,
+       "p95": 0.625556,
+       "min": 0.58861,
+       "max": 0.626416
+      },
+      "loe_range": [
+       0.205898,
+       0.4816
+      ]
+     }
+    },
+    "by_loe": [
+     {
+      "lo": 0.15,
+      "hi": 0.25,
+      "n": 5,
+      "detected": 5,
+      "detected_ci95": [
+       0.565509,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 5,
+       "mean": 52.0,
+       "std": 3.577709,
+       "median": 52.0,
+       "p25": 48.0,
+       "p75": 56.0,
+       "p95": 56.0,
+       "min": 48.0,
+       "max": 56.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 0.8,
+      "loe_abs_err": {
+       "n": 5,
+       "mean": 0.014631,
+       "std": 0.014717,
+       "median": 0.008446,
+       "p25": 0.005977,
+       "p75": 0.014783,
+       "p95": 0.037143,
+       "min": 0.001215,
+       "max": 0.042733
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 0,
+      "px4_held": 5,
+      "px4_descended": 0,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 5,
+       "mean": 9.973565,
+       "std": 2.965662,
+       "median": 11.487723,
+       "p25": 9.606915,
+       "p75": 11.899484,
+       "p95": 12.384725,
+       "min": 4.367669,
+       "max": 12.506036
+      },
+      "alt_loss_m": {
+       "n": 5,
+       "mean": 0.110613,
+       "std": 0.082967,
+       "median": 0.059482,
+       "p25": 0.055327,
+       "p75": 0.116092,
+       "p95": 0.239028,
+       "min": 0.052402,
+       "max": 0.269762
+      },
+      "max_yaw_rate": {
+       "n": 5,
+       "mean": 0.510067,
+       "std": 0.204113,
+       "median": 0.602701,
+       "p25": 0.585499,
+       "p75": 0.626416,
+       "p95": 0.631272,
+       "min": 0.103231,
+       "max": 0.632486
+      },
+      "loe_range": [
+       0.188295,
+       0.230592
+      ]
+     },
+     {
+      "lo": 0.25,
+      "hi": 0.35,
+      "n": 11,
+      "detected": 11,
+      "detected_ci95": [
+       0.74116,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 11,
+       "mean": 44.363636,
+       "std": 3.170108,
+       "median": 44.0,
+       "p25": 42.0,
+       "p75": 48.0,
+       "p95": 48.0,
+       "min": 40.0,
+       "max": 48.0
+      },
+      "isolation_correct": 11,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 11,
+       "mean": 0.005942,
+       "std": 0.004555,
+       "median": 0.004221,
+       "p25": 0.002534,
+       "p75": 0.008141,
+       "p95": 0.014135,
+       "min": 0.001194,
+       "max": 0.014658
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 0,
+      "px4_held": 10,
+      "px4_descended": 1,
+      "px4_flipped": 0,
+      "time_to_loss_s": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 11,
+       "mean": 10.380743,
+       "std": 3.215697,
+       "median": 9.707864,
+       "p25": 7.607403,
+       "p75": 13.27611,
+       "p95": 14.283176,
+       "min": 5.502239,
+       "max": 15.075253
+      },
+      "alt_loss_m": {
+       "n": 11,
+       "mean": 0.294996,
+       "std": 0.714481,
+       "median": 0.071256,
+       "p25": 0.056821,
+       "p75": 0.087725,
+       "p95": 1.330963,
+       "min": 0.028966,
+       "max": 2.553457
+      },
+      "max_yaw_rate": {
+       "n": 11,
+       "mean": 0.416,
+       "std": 0.263428,
+       "median": 0.58861,
+       "p25": 0.13692,
+       "p75": 0.627927,
+       "p95": 0.736542,
+       "min": 0.116074,
+       "max": 0.753409
+      },
+      "loe_range": [
+       0.253259,
+       0.312964
+      ]
+     },
+     {
+      "lo": 0.35,
+      "hi": 0.5,
+      "n": 24,
+      "detected": 24,
+      "detected_ci95": [
+       0.862019,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 24,
+       "mean": 37.5,
+       "std": 5.267827,
+       "median": 36.0,
+       "p25": 36.0,
+       "p75": 40.0,
+       "p95": 40.0,
+       "min": 32.0,
+       "max": 60.0
+      },
+      "isolation_correct": 23,
+      "isolation_accuracy": 0.958333,
+      "loe_abs_err": {
+       "n": 24,
+       "mean": 0.011829,
+       "std": 0.01297,
+       "median": 0.006466,
+       "p25": 0.001969,
+       "p75": 0.015007,
+       "p95": 0.037057,
+       "min": 0.00032,
+       "max": 0.041103
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 0,
+      "px4_flags": [],
+      "px4_delay_ms": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "px4_fd_motor": 0,
+      "lost": 16,
+      "px4_held": 6,
+      "px4_descended": 17,
+      "px4_flipped": 1,
+      "time_to_loss_s": {
+       "n": 16,
+       "mean": 3.8375,
+       "std": 1.060903,
+       "median": 3.67,
+       "p25": 3.054,
+       "p75": 4.174,
+       "p95": 5.702,
+       "min": 2.552,
+       "max": 6.176
+      },
+      "alarm_before_loss": 16,
+      "px4_after_loss": 0,
+      "max_tilt_deg": {
+       "n": 8,
+       "mean": 10.420983,
+       "std": 2.090979,
+       "median": 9.838855,
+       "p25": 9.430854,
+       "p75": 10.851748,
+       "p95": 13.995018,
+       "min": 7.815207,
+       "max": 14.835073
+      },
+      "alt_loss_m": {
+       "n": 8,
+       "mean": 0.951641,
+       "std": 1.473835,
+       "median": 0.259949,
+       "p25": 0.14522,
+       "p75": 0.865803,
+       "p95": 3.522863,
+       "min": 0.091556,
+       "max": 4.71122
+      },
+      "max_yaw_rate": {
+       "n": 8,
+       "mean": 0.277804,
+       "std": 0.181043,
+       "median": 0.210672,
+       "p25": 0.199423,
+       "p75": 0.231451,
+       "p95": 0.572087,
+       "min": 0.184931,
+       "max": 0.754983
+      },
+      "loe_range": [
+       0.350307,
+       0.4816
+      ]
+     }
+    ]
+   },
+   "complete": {
+    "n": 16,
+    "detected": 16,
+    "detected_ci95": [
+     0.806387,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 16,
+     "mean": 20.5,
+     "std": 1.322876,
+     "median": 20.0,
+     "p25": 20.0,
+     "p75": 20.0,
+     "p95": 24.0,
+     "min": 20.0,
+     "max": 24.0
+    },
+    "isolation_correct": 14,
+    "isolation_accuracy": 0.875,
+    "loe_abs_err": {
+     "n": 16,
+     "mean": 0.01232,
+     "std": 0.022394,
+     "median": 0.0,
+     "p25": 0.0,
+     "p75": 0.015,
+     "p95": 0.066843,
+     "min": 0.0,
+     "max": 0.067683
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 16,
+    "px4_flags": [
+     "fd_roll"
+    ],
+    "px4_delay_ms": {
+     "n": 16,
+     "mean": 665.75,
+     "std": 9.270248,
+     "median": 664.0,
+     "p25": 660.0,
+     "p75": 673.0,
+     "p95": 678.0,
+     "min": 644.0,
+     "max": 684.0
+    },
+    "px4_fd_motor": 0,
+    "lost": 16,
+    "px4_held": 0,
+    "px4_descended": 0,
+    "px4_flipped": 16,
+    "time_to_loss_s": {
+     "n": 16,
+     "mean": 0.48675,
+     "std": 0.025089,
+     "median": 0.486,
+     "p25": 0.464,
+     "p75": 0.503,
+     "p95": 0.524,
+     "min": 0.452,
+     "max": 0.536
+    },
+    "alarm_before_loss": 16,
+    "px4_after_loss": 16,
+    "max_tilt_deg": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "alt_loss_m": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "max_yaw_rate": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "loe_range": [
+     1.0,
+     1.0
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 22.0,
+       "std": 2.0,
+       "median": 22.0,
+       "p25": 20.0,
+       "p75": 24.0,
+       "p95": 24.0,
+       "min": 20.0,
+       "max": 24.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.0,
+       "std": 0.0,
+       "median": 0.0,
+       "p25": 0.0,
+       "p75": 0.0,
+       "p95": 0.0,
+       "min": 0.0,
+       "max": 0.0
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 670.0,
+       "std": 6.0,
+       "median": 670.0,
+       "p25": 664.0,
+       "p75": 676.0,
+       "p95": 676.0,
+       "min": 664.0,
+       "max": 676.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.479,
+       "std": 0.022159,
+       "median": 0.476,
+       "p25": 0.464,
+       "p75": 0.491,
+       "p95": 0.5078,
+       "min": 0.452,
+       "max": 0.512
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "hover-wind": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 20.0,
+       "std": 0.0,
+       "median": 20.0,
+       "p25": 20.0,
+       "p75": 20.0,
+       "p95": 20.0,
+       "min": 20.0,
+       "max": 20.0
+      },
+      "isolation_correct": 4,
+      "isolation_accuracy": 1.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.033561,
+       "std": 0.033564,
+       "median": 0.033281,
+       "p25": 0.0,
+       "p75": 0.066843,
+       "p95": 0.067515,
+       "min": 0.0,
+       "max": 0.067683
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 659.0,
+       "std": 9.110434,
+       "median": 662.0,
+       "p25": 656.0,
+       "p75": 665.0,
+       "p95": 667.4,
+       "min": 644.0,
+       "max": 668.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.492,
+       "std": 0.036442,
+       "median": 0.488,
+       "p25": 0.456,
+       "p75": 0.524,
+       "p95": 0.5336,
+       "min": 0.456,
+       "max": 0.536
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "orbit-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 20.0,
+       "std": 0.0,
+       "median": 20.0,
+       "p25": 20.0,
+       "p75": 20.0,
+       "p95": 20.0,
+       "min": 20.0,
+       "max": 20.0
+      },
+      "isolation_correct": 3,
+      "isolation_accuracy": 0.75,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.006774,
+       "std": 0.011732,
+       "median": 0.0,
+       "p25": 0.0,
+       "p75": 0.006774,
+       "p95": 0.02303,
+       "min": 0.0,
+       "max": 0.027094
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 667.0,
+       "std": 9.949874,
+       "median": 662.0,
+       "p25": 660.0,
+       "p75": 669.0,
+       "p95": 681.0,
+       "min": 660.0,
+       "max": 684.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.494,
+       "std": 0.018868,
+       "median": 0.498,
+       "p25": 0.488,
+       "p75": 0.504,
+       "p95": 0.5136,
+       "min": 0.464,
+       "max": 0.516
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     },
+     "orbit-wind": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 20.0,
+       "std": 0.0,
+       "median": 20.0,
+       "p25": 20.0,
+       "p75": 20.0,
+       "p95": 20.0,
+       "min": 20.0,
+       "max": 20.0
+      },
+      "isolation_correct": 3,
+      "isolation_accuracy": 0.75,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 0.008944,
+       "std": 0.009832,
+       "median": 0.006057,
+       "p25": 0.0,
+       "p75": 0.015,
+       "p95": 0.02193,
+       "min": 0.0,
+       "max": 0.023662
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 667.0,
+       "std": 7.681146,
+       "median": 668.0,
+       "p25": 662.0,
+       "p75": 673.0,
+       "p95": 675.4,
+       "min": 656.0,
+       "max": 676.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.482,
+       "std": 0.013416,
+       "median": 0.482,
+       "p25": 0.473,
+       "p75": 0.491,
+       "p95": 0.4982,
+       "min": 0.464,
+       "max": 0.5
+      },
+      "alarm_before_loss": 4,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "px4_off": {
+    "n": 4,
+    "detected": 4,
+    "detected_ci95": [
+     0.5101,
+     1.0
+    ],
+    "delay_ms": {
+     "n": 4,
+     "mean": 1211.0,
+     "std": 3.316625,
+     "median": 1210.0,
+     "p25": 1208.0,
+     "p75": 1213.0,
+     "p95": 1215.4,
+     "min": 1208.0,
+     "max": 1216.0
+    },
+    "isolation_correct": 0,
+    "isolation_accuracy": 0.0,
+    "loe_abs_err": {
+     "n": 4,
+     "mean": 1.042807,
+     "std": 0.00133,
+     "median": 1.042646,
+     "p25": 1.04176,
+     "p75": 1.043693,
+     "p95": 1.044493,
+     "min": 1.041243,
+     "max": 1.044693
+    },
+    "false_alarm_pre_onset": 0,
+    "px4_detected": 4,
+    "px4_flags": [
+     "fd_roll"
+    ],
+    "px4_delay_ms": {
+     "n": 4,
+     "mean": 660.0,
+     "std": 0.0,
+     "median": 660.0,
+     "p25": 660.0,
+     "p75": 660.0,
+     "p95": 660.0,
+     "min": 660.0,
+     "max": 660.0
+    },
+    "px4_fd_motor": 0,
+    "lost": 4,
+    "px4_held": 0,
+    "px4_descended": 0,
+    "px4_flipped": 4,
+    "time_to_loss_s": {
+     "n": 4,
+     "mean": 0.464,
+     "std": 0.014142,
+     "median": 0.458,
+     "p25": 0.455,
+     "p75": 0.467,
+     "p95": 0.4838,
+     "min": 0.452,
+     "max": 0.488
+    },
+    "alarm_before_loss": 0,
+    "px4_after_loss": 4,
+    "max_tilt_deg": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "alt_loss_m": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "max_yaw_rate": {
+     "n": 0,
+     "mean": null,
+     "median": null,
+     "p25": null,
+     "p75": null,
+     "max": null
+    },
+    "loe_range": [
+     1.0,
+     1.0
+    ],
+    "by_condition": {
+     "hover-calm": {
+      "n": 4,
+      "detected": 4,
+      "detected_ci95": [
+       0.5101,
+       1.0
+      ],
+      "delay_ms": {
+       "n": 4,
+       "mean": 1211.0,
+       "std": 3.316625,
+       "median": 1210.0,
+       "p25": 1208.0,
+       "p75": 1213.0,
+       "p95": 1215.4,
+       "min": 1208.0,
+       "max": 1216.0
+      },
+      "isolation_correct": 0,
+      "isolation_accuracy": 0.0,
+      "loe_abs_err": {
+       "n": 4,
+       "mean": 1.042807,
+       "std": 0.00133,
+       "median": 1.042646,
+       "p25": 1.04176,
+       "p75": 1.043693,
+       "p95": 1.044493,
+       "min": 1.041243,
+       "max": 1.044693
+      },
+      "false_alarm_pre_onset": 0,
+      "px4_detected": 4,
+      "px4_flags": [
+       "fd_roll"
+      ],
+      "px4_delay_ms": {
+       "n": 4,
+       "mean": 660.0,
+       "std": 0.0,
+       "median": 660.0,
+       "p25": 660.0,
+       "p75": 660.0,
+       "p95": 660.0,
+       "min": 660.0,
+       "max": 660.0
+      },
+      "px4_fd_motor": 0,
+      "lost": 4,
+      "px4_held": 0,
+      "px4_descended": 0,
+      "px4_flipped": 4,
+      "time_to_loss_s": {
+       "n": 4,
+       "mean": 0.464,
+       "std": 0.014142,
+       "median": 0.458,
+       "p25": 0.455,
+       "p75": 0.467,
+       "p95": 0.4838,
+       "min": 0.452,
+       "max": 0.488
+      },
+      "alarm_before_loss": 0,
+      "px4_after_loss": 4,
+      "max_tilt_deg": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "alt_loss_m": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "max_yaw_rate": {
+       "n": 0,
+       "mean": null,
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "max": null
+      },
+      "loe_range": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   }
+  }
+ },
+ "figures": {
+  "timeline_runs": [
+   "partial-orbit-wind-03",
+   "complete-hover-calm-00"
+  ]
+ }
+}

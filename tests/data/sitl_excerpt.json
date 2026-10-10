@@ -1,0 +1,29 @@
+{
+ "run": "partial-hover-calm-03",
+ "spec": {
+  "name": "partial-hover-calm-03",
+  "seed": 2003,
+  "traj": "hover",
+  "fault": "esc",
+  "motor": 4,
+  "loe": 0.253,
+  "pre_s": 11.91,
+  "post_s": 8.0,
+  "world": "default",
+  "altitude": 6.0,
+  "orbit_radius": 5.0,
+  "orbit_speed": 3.0,
+  "speed_factor": 4,
+  "extra_params": {}
+ },
+ "inject_sent_s": 39.44,
+ "manoeuvre_s": 27.524,
+ "fault_params": {
+  "SIM_GZ_EC_MAX4": 864,
+  "SIM_GZ_EC_MIN4": 130
+ },
+ "window_s": [
+  36.839999999999996,
+  40.04
+ ]
+}

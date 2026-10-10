@@ -19,8 +19,10 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: Ruff
         run: |
-          ruff check src tests experiments
-          ruff format --check src tests experiments
+          ruff check src tests experiments sitl
+          ruff format --check src tests experiments sitl
+      # PX4 SITL itself cannot run on CI: only the offline log pipeline is tested
+      # (ULog excerpt from a SITL run, synthetic Betaflight logs from the simulator)
       - name: Pytest
         run: python -m pytest
       - name: Smoke experiment (quick version of the whole pipeline)
@@ -28,3 +30,7 @@ jobs:
           mkdir -p build/smoke
           ROTORFAULT_ROOT=build/smoke ROTORFAULT_WORKERS=2 python -m rotorfault experiments --quick
           ROTORFAULT_ROOT=build/smoke python -m rotorfault simulate --loe 1.0 --duration 6
+      - name: Replay CLI on the SITL log excerpt
+        run: |
+          python -m rotorfault replay tests/data/sitl_excerpt.ulg --airframe sitl/config/x500.yaml \
+            --calibration sitl/results/sitl_calibration_proposed.json --baseline 1.0

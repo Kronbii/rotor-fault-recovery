@@ -4,7 +4,8 @@
 PY ?= .venv/bin/python
 PIP ?= .venv/bin/pip
 
-.PHONY: setup test lint format experiments figures report reproduce smoke clean-results paper
+.PHONY: setup test lint format experiments figures report reproduce smoke clean-results paper \
+	sitl-setup sitl-campaign sitl-analyze
 
 setup:
 	python3 -m venv .venv
@@ -15,12 +16,12 @@ test:
 	$(PY) -m pytest
 
 lint:
-	$(PY) -m ruff check src tests experiments
-	$(PY) -m ruff format --check src tests experiments
+	$(PY) -m ruff check src tests experiments sitl
+	$(PY) -m ruff format --check src tests experiments sitl
 
 format:
-	$(PY) -m ruff format src tests experiments
-	$(PY) -m ruff check --fix src tests experiments
+	$(PY) -m ruff format src tests experiments sitl
+	$(PY) -m ruff check --fix src tests experiments sitl
 
 # Calibration + E1-E6 (results/*.json, results/*.csv, results/replays/*.json)
 experiments:
@@ -54,3 +55,18 @@ paper:
 	  pdflatex -interaction=nonstopmode main && pdflatex -interaction=nonstopmode main; \
 	elif command -v tectonic >/dev/null 2>&1; then tectonic main.tex; \
 	else echo "install TeX Live (pdflatex, bibtex) or Tectonic to build the paper"; exit 1; fi
+
+# PX4 SITL validation (needs PX4-Autopilot built for SITL in $(PX4_DIR) and Gazebo Harmonic;
+# not run by CI). See sitl/README.md.
+PX4_DIR ?= $(HOME)/repos/PX4-Autopilot
+
+sitl-setup:
+	$(PY) -m pip install -e ".[dev,sitl]"
+	PX4_DIR=$(PX4_DIR) $(PY) sitl/make_airframe.py
+
+sitl-campaign:
+	PX4_DIR=$(PX4_DIR) $(PY) sitl/campaign.py --workers 2
+
+# offline: replays the diagnoser on build/sitl/npz, writes sitl/results, sitl/figures, report
+sitl-analyze:
+	$(PY) sitl/analyze.py
