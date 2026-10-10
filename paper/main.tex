@@ -10,12 +10,12 @@
 \usepackage{url}
 \usepackage{xcolor}
 \usepackage{cite}
-\graphicspath{{../figures/}}
+\graphicspath{{../figures/}{../sitl/figures/}}
 % several floats per page, so tables sit next to their text instead of trailing the paper
 \setcounter{topnumber}{3}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{5}
-\setcounter{dbltopnumber}{3}
+\setcounter{dbltopnumber}{2}
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\bottomfraction}{0.6}
 \renewcommand{\textfraction}{0.08}
@@ -92,7 +92,7 @@ f$ under $f_{\min}\le f\le f_{\max}$ in closed form with priorities: the roll/pi
 (scaled only if infeasible), the collective is shifted by the smallest feasible amount, and the
 yaw torque is scaled last.
 
-\section{Fault detection, isolation and estimation}
+\section{Fault detection, isolation and estimation}\label{sec:fdi}
 \textbf{Regression.} The rotational dynamics and the body-z force balance are linear in $\eta$:
 \begin{equation}
 \begin{aligned}
@@ -258,12 +258,55 @@ true system departs from the model.}
 \label{fig:family}
 \end{figure}
 
+\section{PX4 SITL validation}
+To check that the diagnoser is not tied to the simulator it was developed on, it was
+replayed offline on ULogs of PX4~\cite{meier2015px4} software-in-the-loop flights:
+PX4-Autopilot (v1.18.0-beta1, unmodified) with its x500 quadrotor in Gazebo
+Harmonic~\cite{koenig2004gazebo}, run headless and commanded over
+MAVLink to take off, hover or fly a 5\,m/3\,m/s orbit, in calm air or PX4's windy world (steady
+5.4\,m/s), with a fault injected 8--14\,s into the manoeuvre. The x500 weighs 2.1\,kg and has a
+thrust-to-weight ratio of 1.7. Its airframe description (mass, inertia, rotor layout, spin
+directions, motor constants and asymmetric time constants) is generated from PX4's model
+files; only the command-to-thrust delay (\resSitlDelayMs\,ms) is fitted, and the residual floor
+and thresholds come from \resSitlNCal{} fault-free calibration flights with disjoint seeds, by the
+procedure of Section~\ref{sec:fdi}. All filter, Kalman-filter and CUSUM settings are unchanged.
+
+PX4's own \texttt{failure motor off} injection (the only motor failure type at this version) had
+no effect with the default \texttt{CA\_FAILURE\_MODE}~$=0$, and with mode~1 it logs the stopped
+motor's command as NaN, which reveals the fault to a log-based diagnoser. The evaluated faults
+were therefore injected in the simulated ESC: the limits of the bridge's command-to-speed map are
+scaled at runtime, so that one motor delivers a fraction of the commanded speed while PX4 keeps
+logging the intended command.
+
+\input{generated/sitl_text.tex}
+
+The comparison with PX4 (Table~\ref{tab:sitl}, Fig.~\ref{fig:sitl}) is not one between two
+diagnosers: PX4's checks are last-resort triggers (attitude beyond 60$^\circ$ for 0.3\,s,
+altitude loss, off by default, and ESC current against throttle, which cannot fire in SITL
+because Gazebo's ESC model reports no current). The adaptive residual scale, for which the
+5-inch ablation showed no benefit, trades about 0.1\,s of delay for correct isolation here: the
+four isolation errors without it all named the diagonal partner with the same spin direction,
+within the first tens of milliseconds. The false-alarm result is weak evidence: Gazebo's IMU is
+almost noise-free and does not vibrate, the calibration statistics never left zero and the
+thresholds were set by the 20\,ms evidence floor. No fault-tolerant control was run in PX4.
+
+\input{generated/table_sitl.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{fig_sitl_delay.png}
+\caption{PX4 SITL: (a) detection delay of the partial losses versus the true thrust loss, as
+designed (filled) and without the adaptive residual scale (open); (b) complete losses: diagnoser
+alarm, the instant the tilt passes 90$^\circ$, and PX4's failure detector.}
+\label{fig:sitl}
+\end{figure*}
 
 \section{Discussion and limitations}
 The results support the pipeline \emph{in simulation}: diagnosis is fast enough that the
 partial-loss transient stays at the turbulence floor, and it is fast enough to hand a complete
 loss to the yaw-relaxed controller within about 60\,ms. They do not show that it works on a
-real 5-inch quadrotor. All parameters are assumed; the rotational damping that sets the spin
+real 5-inch quadrotor; the PX4 SITL replay shows that the diagnoser carries over to another
+flight stack and vehicle model, which is still simulation. All parameters are assumed; the rotational damping that sets the spin
 rate is the least certain, and the aerodynamics of a body spinning at more than 20\,rad/s is not
 modelled. Real vibration is narrow-band and larger than the white noise used here, and the
 turbulence model is a simple Gauss--Markov process, so the near-perfect detection numbers are
@@ -279,11 +322,13 @@ A model-based diagnoser (filtered rigid-body regression, Kalman filter, CUSUM ba
 with re-allocation for partial losses and a gain-scheduled yaw-relaxed controller for complete
 losses recovered every simulated rotor fault in the main experiments, including complete losses during
 3.3\,m/s flight; in the robustness sweeps it failed at large actuator delay, very slow motors and
-strong turbulence. The next steps are PX4
-SITL, offline evaluation on Betaflight blackbox logs of a real 5-inch quadrotor (including
-identification of its parameters and the use of RPM telemetry), protected flight tests with a
-weakened and then a cut propeller, and a comparison with INDI-based
-FTC~\cite{smeur2016adaptive,sun2021incremental}.
+strong turbulence. Replayed on PX4 SITL logs of a different vehicle, it detected
+\resSitlPartDet/\resSitlPartN{} partial and \resSitlCompDet/\resSitlCompN{} complete losses, with
+\resSitlFa{} false alarms in \resSitlFreeMin\,min of fault-free flight. The next steps are tethered tests on the real 5-inch quadrotor with the
+same estimator replayed on Betaflight blackbox logs (fault-free flights for the residual floor
+and the parameters, then a weakened propeller and a throttled ESC; the log pipeline and the
+protocol are in the repository), the diagnoser running inside PX4, and a comparison with
+INDI-based FTC~\cite{smeur2016adaptive,sun2021incremental}.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
